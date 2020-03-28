@@ -1,0 +1,1 @@
+{"status":"3","message":"Th\u1ebb l\u1ed7i","request_id":"158530635343461","value":"0","code":"311513787725968","serial":"10004828603224","telco":"VIETTEL","callback_sign":"6326ad9378947c56fc6eedda4e15fc44"}
