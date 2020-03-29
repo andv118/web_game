@@ -16,19 +16,16 @@ class CheckAdmin
      * @param  \Closure  $next
      * @return mixed
      */
-     public function handle($request, Closure $next)
+    public function handle($request, Closure $next)
     {
-        
-        if(Auth::check()){
-            if(Session::get('userrole')==0){
+
+        if (Auth::check()) {
+            if (Session::get('userrole') == 0) {
                 return $next($request);
             }
             return redirect()->route('admin.home');
-
-         }else{
+        } else {
             return redirect()->route('loginn');
-
-         }
-        
+        }
     }
 }

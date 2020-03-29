@@ -99,12 +99,8 @@
 
         <!-- BEGIN: PAGINATION -->
         <div class="data_paginate paging_bootstrap paginations_custom" style="text-align: center">
-            {{ $dataLog->appends([
-                'id' => $dataBack['id'],
-                'started_at' => $dataBack['started_at'],
-                'ended_at' => $dataBack['ended_at']
-                ])
-                ->links() }}
+            {{ $dataLog->appends(request()->query())->links() }}
+                
         </div>
         <!-- END: PAGINATION -->
     </div>

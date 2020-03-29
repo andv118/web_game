@@ -56,7 +56,7 @@
                 </a>
             </div>
         </div>
-         <!-- Sidebar Menu -->
+        <!-- Sidebar Menu -->
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 <!-- Add icons to the links using the .nav-icon class
@@ -170,7 +170,9 @@
                 <li class="nav-item child-menu">
                     <a href="{{Route('admin.giao-dich.history_service')}}" class="nav-link">
                         <i class="fa fa-plus" style="font-size:10px!important;"></i>
-                        <p>Dịch vụ</p>
+                        <p>Dịch vụ
+                            <span id="numberdichvu" class="soluong">{{$numberDichVu}}</span>
+                        </p>
                     </a>
                 </li>
                 <li class="nav-item child-menu">
@@ -192,7 +194,7 @@
                     </a>
                 </li>
                 <li class="nav-item child-menu">
-                    <a href="{{route('admin.giao-dich.history_random')}}" class="nav-link">
+                    <a href="{{route('admin.giao-dich.history_whell')}}" class="nav-link">
                         <i class="fa fa-plus" style="font-size:10px!important;"></i>
                         <p>Lịch sử quay</p>
                     </a>
@@ -216,14 +218,29 @@
             </ul>
         </nav>
         <!-- /.sidebar-menu -->
-      
+
     </div>
     <!-- /.sidebar -->
 </aside>
 
 <style type="text/css">
-  
-  .child-menu{
-    padding-left: 2.3em;
-  }
+    .child-menu {
+        padding-left: 2.3em;
+    }
+
+    .soluong {
+        background-color: #df2935;
+        border-radius: 24px;
+        box-shadow: -1px 1px 2px 0 rgba(0, 0, 0, .3);
+        color: #fff;
+        cursor: default;
+        font-size: 15px;
+        width: auto;
+        height: 20px;
+        line-height: 20px;
+        position: absolute;
+        text-align: center;
+        right: 95px;
+        top: 0;
+    }
 </style>

@@ -18,11 +18,9 @@ class checkLogin
      */
     public function handle($request, Closure $next)
     {
-        if(Session::has('admin_id')){
+        if (Session::has('admin_id')) {
             return $next($request);
-
         }
-            return redirect()->route('login_admin');
-        
+        return redirect()->route('login_admin');
     }
 }

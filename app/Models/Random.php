@@ -29,7 +29,7 @@ class Random extends Model
     public function scopeType($query, $type)
     {
         if ($type != null) {
-            $query->where('type', 'like', '%' . $type . '%');
+            $query->where('type', '=' , $type);
         }
         return $query;
     }

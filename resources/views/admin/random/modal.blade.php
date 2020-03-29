@@ -13,7 +13,6 @@
                  <form id="add_random" action="{{ Route('admin.create_random') }}" class="form-horizontal" method="POST">
                      {{ csrf_field() }}
 
-
                      <div class="row">
                          <div class="col-lg-6 col-md-12 col-sm-12">
                              <div class="input-group m-b-10 c-square">
@@ -46,7 +45,7 @@
                          <div class="col-lg-12 col-md-12 col-sm-12">
                              <div class="input-group m-b-10 c-square">
                                  <span class="input-group-addon"><b>Tài khoản:</b></span>
-                                 <input class="form-control c-square c-theme" name="infor" value="" placeholder="Tài khoản|Mật khẩu|Mật khẩu cấp 2 (nếu có)" rows="6" required=""></input>
+                                 <textarea class="form-control c-square c-theme" name="infor" value="" placeholder="Tài khoản|Mật khẩu|Mật khẩu cấp 2 (nếu có)" rows="6" required=""></textarea>
                              </div>
                          </div>
                      </div>
@@ -70,7 +69,7 @@
      <div class="modal-dialog modal-lg">
          <div class="modal-content">
              <div class="modal-header">
-                 <h4 class="modal-title" id="exampleModalLabel">Sửa tài khoản Random</h4>
+                 <h4 class="modal-title" id="exampleModalLabel">Sửa tài khoản Random # <span id="update_random_id_abc"></span> </h4>
                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                      <span aria-hidden="true">×</span>
                  </button>

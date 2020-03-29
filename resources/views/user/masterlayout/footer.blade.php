@@ -67,7 +67,7 @@
 	<div class="c-prefooter">
 		<div class="container">
 			<div class="row">
-				
+
 				<div class="col-md-4">
 					<div class="c-container c-last">
 						<div class="c-content-title-1">
@@ -76,9 +76,9 @@
 							<p style="color:#dddddd;font-size: 16px;">{!!$settings[9]!!}</p>
 						</div>
 						<ul class="c-address" style="margin-top: 35%;">
-							<li><span class="c-font-regular"> 
-								<p class="c-copyright c-font-grey">2019 © vận hành bởi <a style="color: #32c5d2 !important">Hano TV</a> <span class="c-font-grey-3"> </span>
-								</p>
+							<li><span class="c-font-regular">
+									<p class="c-copyright c-font-grey">2019 © vận hành bởi <a style="color: #32c5d2 !important">Hano TV</a> <span class="c-font-grey-3"> </span>
+									</p>
 							</li>
 						</ul>
 					</div>
@@ -110,34 +110,29 @@
 	<i class="icon-arrow-up"></i>
 </div>
 
-
-
 <!-- Load Facebook SDK for JavaScript -->
-      <div id="fb-root"></div>
-      <script>
-        window.fbAsyncInit = function() {
-          FB.init({
-            xfbml            : true,
-            version          : 'v6.0'
-          });
-        };
+<div id="fb-root"></div>
+<script>
+	window.fbAsyncInit = function() {
+		FB.init({
+			xfbml: true,
+			version: 'v6.0'
+		});
+	};
 
-        (function(d, s, id) {
-        var js, fjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id)) return;
-        js = d.createElement(s); js.id = id;
-        js.src = 'https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js';
-        fjs.parentNode.insertBefore(js, fjs);
-      }(document, 'script', 'facebook-jssdk'));</script>
+	(function(d, s, id) {
+		var js, fjs = d.getElementsByTagName(s)[0];
+		if (d.getElementById(id)) return;
+		js = d.createElement(s);
+		js.id = id;
+		js.src = 'https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js';
+		fjs.parentNode.insertBefore(js, fjs);
+	}(document, 'script', 'facebook-jssdk'));
+</script>
 
-      <!-- Your customer chat code -->
-      <div class="fb-customerchat"
-        attribution=setup_tool
-        page_id="114881616820155"
-  logged_in_greeting="Hi ! Bạn Cần Hỗ Trợ Gì ?"
-  logged_out_greeting="Hi ! Bạn Cần Hỗ Trợ Gì ?">
-      </div>
-
+<!-- Your customer chat code -->
+<div class="fb-customerchat" attribution=setup_tool page_id="114881616820155" logged_in_greeting="Hi ! Bạn Cần Hỗ Trợ Gì ?" logged_out_greeting="Hi ! Bạn Cần Hỗ Trợ Gì ?">
+</div>
 
 
 @include('user.atm_modal.index')

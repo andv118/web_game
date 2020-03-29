@@ -23,9 +23,10 @@ Route::get('/nap-the-callback', 'NapTheController@callbackNapThe'); // Nạp th�
 
 Route::get('/nap-tien-atm', 'NapTheController@nap_ATM')->name('nap_atm'); // Nạp ATM
 
-Route::get('/ngoc-rong/{param}', 'BaseController@ngoc_rong')->name('ngoc_rong'); //Trang nick ngọc rồng
-Route::get('/ngoc-rong/chi-tiet/{id}', 'BaseController@chi_tiet_ngoc_rong')->name('chi_tiet_ngoc_rong'); //Trang chi tiết nick ngọc rồng
-Route::post('/thanh-toan-ngoc-rong', 'BaseController@thanh_toan_ngoc_rong')->name('pay_ngoc_rong'); //Trang nick ngọc rồng
+//------------------DANH MỤC GAME: Ngọc Rồng----------------
+Route::get('/ngoc-rong/{param}', 'GameController@ngoc_rong')->name('ngoc_rong'); //show
+Route::get('/ngoc-rong/chi-tiet/{id}', 'GameController@chi_tiet_ngoc_rong')->name('chi_tiet_ngoc_rong'); //chi tiết ngọc rồng
+Route::post('/ngoc-rong/thanh-toan', 'GameController@thanh_toan_ngoc_rong')->name('pay_ngoc_rong'); //pay
 
 
 //------------------Dịch vụ game - Transaction----------------
@@ -144,10 +145,10 @@ Route::group(['prefix' => 'quan-tri', 'as' => 'admin.', 'middleware' => ['checkL
 	Route::get('tai-khoan-lien-quan', 'GameController@tk_lienquan')->name('tk_lienquan');
 	Route::get('tai-khoan-freefire', 'GameController@tk_freefire')->name('tk_freefire');
 
-	Route::get('tai-khoan-random', 'GameController@tk_random')->name('tk_random');
-	Route::post('them-tai-khoan-random', 'GameController@create_random')->name('create_random');
-	Route::post('sua-tai-khoan-random', 'GameController@update_random')->name('update_random');
-	Route::get('xoa-khoan-random/{id}', 'GameController@delete_random')->name('delete_random');
+	Route::get('tai-khoan-random', 'RandomController@tk_random')->name('tk_random');
+	Route::post('them-tai-khoan-random', 'RandomController@create_random')->name('create_random');
+	Route::post('sua-tai-khoan-random', 'RandomController@update_random')->name('update_random');
+	Route::get('xoa-khoan-random/{id}', 'RandomController@delete_random')->name('delete_random');
 
 	//----------------------------Giao dịch game------------------
 	Route::group(['prefix' => 'giao-dich', 'as' => 'giao-dich.'], function () {
@@ -167,6 +168,6 @@ Route::group(['prefix' => 'quan-tri', 'as' => 'admin.', 'middleware' => ['checkL
 		Route::get('lich-su-mua', 'ChargeController@history_buy')->name('history_buy');
 		Route::post('xoa-all-lich-su-mua', 'ChargeController@delete_all_buy')->name('delete_all_buy');
 
-		Route::get('lich-su-quay', 'ChargeController@history_random')->name('history_random');
+		Route::get('lich-su-quay', 'ChargeController@history_whell')->name('history_whell');
 	});
 });

@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App\Models\Settings;
+use App\Models\UsersService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -45,6 +46,11 @@ class AppServiceProvider extends ServiceProvider
             }
 
             $view->with('settings',$data);
+        });
+
+        view()->composer('admin/header',function($view){
+            $numberDichVu = UsersService::query()->Status(1)->count();
+            $view->with('numberDichVu',$numberDichVu);
         });
     }
 

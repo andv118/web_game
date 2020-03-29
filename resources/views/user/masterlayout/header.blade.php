@@ -79,7 +79,7 @@
 
                         <li class="c-menu-type-classic"><a title="Nạp thẻ" title="Nạp thẻ" href="{{Route('nap_the')}}" class="c-link dropdown-toggle ">Nạp thẻ</a></li>
 
-                        <li class="c-menu-type-classic"><a title="Nạp ATM - VÍ" href="#" rel="{{Route('nap_atm')}}" class="c-link dropdown-toggle load-atm" data-toggle="modal" data-target="#atm_modal">Nạp ATM - Ví</a></li>
+                        <li class="c-menu-type-classic"><a title="Dịch vụ" href="{{Route('dichvu.ngocrong.index')}}" class="c-link dropdown-toggle">Dịch vụ</a></li>
 
                         <li class="c-menu-type-classic"><a title="Lịch sử giao dịch" href="{{Route('giao-dich.dich-vu.index')}}" class="c-link dropdown-toggle ">Lịch sử</a></li>
 
@@ -119,7 +119,7 @@
                         <li class="c-menu-type-classic"><a title="Nạp thẻ" title="Nạp thẻ" href="{{Route('nap_the')}}" class="c-link dropdown-toggle ">Nạp thẻ</a>
                         </li>
 
-                        <li class="c-menu-type-classic"><a title="Nạp ATM - VÍ" href="#" rel="{{Route('nap_atm')}}" class="c-link dropdown-toggle load-atm">Nạp ATM - Ví</a>
+                        <li class="c-menu-type-classic"><a title="Dịch vụ" href="{{Route('dichvu.ngocrong.index')}}" class="c-link dropdown-toggle">Dịch vụ</a>
                         </li>
 
                         <li class="c-menu-type-classic"><a title="Lịch sử giao dịch" href="{{Route('giao-dich.dich-vu.index')}}" class="c-link dropdown-toggle ">Lịch sử</a>

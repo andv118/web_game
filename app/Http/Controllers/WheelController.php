@@ -28,10 +28,11 @@ class Element
      *
      * @throws InvalidWeightException
      */
-    public function __construct($data, $weight = 1.0) {
+    public function __construct($data, $weight = 1.0)
+    {
         $this->data = $data;
         $this->weight = $weight;
-        if($weight < 0) {
+        if ($weight < 0) {
             throw new InvalidWeightException("Weight is invalid: must be greater or equal than 0.");
         }
     }
@@ -103,12 +104,14 @@ class Randomizer
     public function getProbabilityFor($data)
     {
         $found = null;
-        array_map(function ($element) use ($data, &$found) {
+        array_map(
+            function ($element) use ($data, &$found) {
                 if ($element->getData() === $data) {
                     $found = $element;
                 }
             },
-            $this->elements);
+            $this->elements
+        );
         if ($found !== null) {
             return $found->getWeight() / $this->getTotalWeight();
         }
@@ -122,7 +125,7 @@ class Randomizer
      */
     protected function addElement($element)
     {
-        if($element->getData() == null) {
+        if ($element->getData() == null) {
             throw new Exception("Invalid Element data: null is not allowed.");
         }
         if ($this->elementExistsWith($element->getData())) {
@@ -138,10 +141,12 @@ class Randomizer
     private function getTotalWeight()
     {
         $total = 0.0;
-        array_map(function ($element) use (&$total) {
+        array_map(
+            function ($element) use (&$total) {
                 $total += $element->getWeight();
             },
-            $this->elements);
+            $this->elements
+        );
         return $total;
     }
     /**
@@ -179,210 +184,207 @@ class Randomizer
 class WheelController extends Controller
 {
 
-    public function index(Request $req){   
+    public function index(Request $req)
+    {
 
-	   return view('user/vongquay/index');
-    	
-
+        return view('user/vongquay/index');
     }
 
 
 
-    public function wheel50(Request $req){   
+    public function wheel50(Request $req)
+    {
 
-       return view('user/vongquay/wheel50');
-        
-
+        return view('user/vongquay/wheel50');
     }
 
 
 
-    public function wheel20(Request $req){   
+    public function wheel20(Request $req)
+    {
 
-       return view('user/vongquay/wheel20');
-        
-
+        return view('user/vongquay/wheel20');
     }
 
 
 
-    public function load(Request $req){   
-
-        if(!Auth::check()){
+    public function load(Request $req)
+    {
+        if (!Auth::check()) {
             echo json_encode(array("status" => "LOGIN"));
-        }else if(Auth::user()->locked == 1){
+        } else if (Auth::user()->locked == 1) {
             echo json_encode(array("msg" => "Bạn đã bị khóa giao dịch", "status" => "ERROR"));
-        }else if(Auth::user()->point < 1){
+        } else if (Auth::user()->point < 1) {
             echo json_encode(array("msg" => "Bạn không đủ lượt quay, hãy mua thêm", "status" => "ERROR"));
-        }else{
+        } else {
 
             $randomizer = new Randomizer();
-            $randomizer->add( new Element('4', 100));
-            $post = $randomizer->get(); 
-            $name = array(4 => "Tích lũy thêm 10% may mắn", 1 => "Chúc bạn may mắn lần sau ^^", 3 => "Bạn đã nhận được 20K vào tài khoản trên web, hãy kiểm tra lịch sử giao dịch", 7 => "Bạn đã quay trúng tài khoản trắng thông tin, hãy kiểm tra mục tài khoản đã mua");
+            $randomizer->add(new Element('4', 100));
+            $post = $randomizer->get();
+            $name = array(4 => "Tích lũy thêm 30% may mắn", 1 => "Chúc bạn may mắn lần sau ^^", 3 => "Bạn đã nhận được 20K vào tài khoản trên web, hãy kiểm tra lịch sử giao dịch", 7 => "Bạn đã quay trúng tài khoản trắng thông tin, hãy kiểm tra mục tài khoản đã mua");
 
-            Users::where('user_id',Auth::user()->user_id)->update(['point'=>Auth::user()->point - 1]);
-
+            Users::where('user_id', Auth::user()->user_id)->update(['point' => Auth::user()->point - 1]);
+            $whell = new Wheel();
+            $whell->user_id = Auth::user()->user_id;
+            $whell->type = 1;
+            $whell->content = $name[$post];
+            $whell->cost = 50000;
+            $whell->status = 1;
+            $whell->save();
             echo json_encode(
                 array("msg" => array("name" => $name[$post], "pos" => $post, "num_roll_remain" => Auth::user()->point, "status" => "OK"))
             );
-        
-       }
-
+        }
     }
 
 
-    public function load50(Request $req){   
+    public function load50(Request $req)
+    {
 
-        if(!Auth::check()){
+        if (!Auth::check()) {
             echo json_encode(array("status" => "LOGIN"));
-        }else if(Auth::user()->locked == 1){
+        } else if (Auth::user()->locked == 1) {
             echo json_encode(array("msg" => "Bạn đã bị khóa giao dịch", "status" => "ERROR"));
-        }else if(Auth::user()->point_50 < 1){
+        } else if (Auth::user()->point_50 < 1) {
             echo json_encode(array("msg" => "Bạn không đủ lượt quay, hãy mua thêm", "status" => "ERROR"));
-        }else{
+        } else {
 
             $randomizer = new Randomizer();
-            $randomizer->add( new Element('1', 100));
-            $post = $randomizer->get(); 
+            $randomizer->add(new Element('4', 100));
+            $post = $randomizer->get();
             $name = array(4 => "Tích lũy thêm 30% may mắn", 1 => "Chúc bạn may mắn lần sau ^^", 3 => "Bạn đã nhận được 20K vào tài khoản trên web, hãy kiểm tra lịch sử giao dịch", 7 => "Bạn đã quay trúng tài khoản trắng thông tin, hãy kiểm tra mục tài khoản đã mua");
 
-            Users::where('user_id',Auth::user()->user_id)->update(['point_50'=>Auth::user()->point_50 - 1]);
-
+            Users::where('user_id', Auth::user()->user_id)->update(['point_50' => Auth::user()->point_50 - 1]);
+            $whell = new Wheel();
+            $whell->user_id = Auth::user()->user_id;
+            $whell->type = 0;
+            $whell->content = $name[$post];
+            $whell->cost = 50000;
+            $whell->status = 1;
+            $whell->save();
             echo json_encode(
                 array("msg" => array("name" => $name[$post], "pos" => $post, "num_roll_remain" => Auth::user()->point_50, "status" => "OK"))
             );
-        
-       }
-
+        }
     }
 
 
-    public function load20(Request $req){   
-
-        if(!Auth::check()){
+    public function load20(Request $req)
+    {
+        $user_id = Auth::user()->user_id;
+        if (!Auth::check()) {
             echo json_encode(array("status" => "LOGIN"));
-        }else if(Auth::user()->locked == 1){
+        } else if (Auth::user()->locked == 1) {
             echo json_encode(array("msg" => "Bạn đã bị khóa giao dịch", "status" => "ERROR"));
-        }else if(Auth::user()->point_20 < 1){
+        } else if (Auth::user()->point_20 < 1) {
             echo json_encode(array("msg" => "Bạn không đủ lượt quay, hãy mua thêm", "status" => "ERROR"));
-        }else{
+        } else {
 
             $randomizer = new Randomizer();
-            $randomizer->add( new Element('4', 100));
-            $post = $randomizer->get(); 
+            $randomizer->add(new Element('4', 100));
+            $post = $randomizer->get();
             $name = array(4 => "Tích lũy thêm 30% may mắn", 1 => "Chúc bạn may mắn lần sau ^^", 3 => "Bạn đã nhận được 20K vào tài khoản trên web, hãy kiểm tra lịch sử giao dịch", 7 => "Bạn đã quay trúng tài khoản trắng thông tin, hãy kiểm tra mục tài khoản đã mua");
 
-            Users::where('user_id',Auth::user()->user_id)->update(['point_20'=>Auth::user()->point_20 - 1]);
+            Users::where('user_id', Auth::user()->user_id)->update(['point_20' => Auth::user()->point_20 - 1]);
+            $whell = new Wheel();
+            $whell->user_id = $user_id;
+            $whell->type = 0;
+            $whell->content = $name[$post];
+            $whell->cost = 20000;
+            $whell->status = 1;
+            $whell->save();
 
             echo json_encode(
                 array("msg" => array("name" => $name[$post], "pos" => $post, "num_roll_remain" => Auth::user()->point_20, "status" => "OK"))
             );
-        
-       }
-
+        }
     }
 
-    public function buy(Request $req){
+    public function buy(Request $req)
+    {
 
-        if(!Auth::check()){
+        if (!Auth::check()) {
             return redirect()->route('login_user');
-        }else if(Auth::user()->locked == 1){
-             return redirect()->back()->with('err','Tài khoản bị khóa !');
-        }else if(Auth::user()->cash < 50000){
-            return redirect()->back()->with('err','Bạn không đủ tiền để mua, hãy nạp thêm');     
-        }else{
+        } else if (Auth::user()->locked == 1) {
+            return redirect()->back()->with('err', 'Tài khoản bị khóa !');
+        } else if (Auth::user()->cash < 50000) {
+            return redirect()->back()->with('err', 'Bạn không đủ tiền để mua, hãy nạp thêm');
+        } else {
 
-            $cash = Auth::user()->cash - 50000; 
-            Users::where('user_id',Auth::user()->user_id)->update(['cash'=>$cash,'point'=>Auth::user()->point + 1]);
-          
+            $cash = Auth::user()->cash - 50000;
+            Users::where('user_id', Auth::user()->user_id)->update(['cash' => $cash, 'point' => Auth::user()->point + 1]);
+
             $log = new UsersLog();
             $log->user_id = Auth::user()->user_id;
             $log->trade_type = 9;
             $log->amount = 50000;
             $log->content = 'Mua 1 lượt quay';
-            $log->last_amount = (int)$cash;
+            $log->last_amount = (int) $cash;
             $log->status = 1;
             $log->add_time = time();
             $log->domain = 'sh0phano.com';
             $log->save();
 
-            return redirect()->back()->with('success','Bạn đã mua 1 lượt quay thành công !');   
-
+            return redirect()->back()->with('success', 'Bạn đã mua 1 lượt quay thành công !');
         }
-
-
     }
 
 
-    public function buy20(Request $req){
+    public function buy20(Request $req)
+    {
 
-        if(!Auth::check()){
+        if (!Auth::check()) {
             return redirect()->route('login_user');
-        }else if(Auth::user()->locked == 1){
-             return redirect()->back()->with('err','Tài khoản bị khóa !');
-        }else if(Auth::user()->cash < 20000){
-            return redirect()->back()->with('err','Bạn không đủ tiền để mua, hãy nạp thêm');     
-        }else{
+        } else if (Auth::user()->locked == 1) {
+            return redirect()->back()->with('err', 'Tài khoản bị khóa !');
+        } else if (Auth::user()->cash < 20000) {
+            return redirect()->back()->with('err', 'Bạn không đủ tiền để mua, hãy nạp thêm');
+        } else {
 
-            $cash = Auth::user()->cash - 20000; 
-            Users::where('user_id',Auth::user()->user_id)->update(['cash'=>$cash,'point_20'=>Auth::user()->point_20 + 1]);
-          
+            $cash = Auth::user()->cash - 20000;
+            Users::where('user_id', Auth::user()->user_id)->update(['cash' => $cash, 'point_20' => Auth::user()->point_20 + 1]);
+
             $log = new UsersLog();
             $log->user_id = Auth::user()->user_id;
             $log->trade_type = 9;
             $log->amount = 20000;
             $log->content = 'Mua 1 lượt quay';
-            $log->last_amount = (int)$cash;
+            $log->last_amount = (int) $cash;
             $log->status = 1;
             $log->add_time = time();
             $log->domain = 'sh0phano.com';
             $log->save();
 
-            return redirect()->back()->with('success','Bạn đã mua 1 lượt quay thành công !');   
-
+            return redirect()->back()->with('success', 'Bạn đã mua 1 lượt quay thành công !');
         }
-
-
     }
 
+    public function buy50(Request $req)
+    {
 
-
-
-    public function buy50(Request $req){
-
-        if(!Auth::check()){
+        if (!Auth::check()) {
             return redirect()->route('login_user');
-        }else if(Auth::user()->locked == 1){
-             return redirect()->back()->with('err','Tài khoản bị khóa !');
-        }else if(Auth::user()->cash < 50000){
-            return redirect()->back()->with('err','Bạn không đủ tiền để mua, hãy nạp thêm');     
-        }else{
+        } else if (Auth::user()->locked == 1) {
+            return redirect()->back()->with('err', 'Tài khoản bị khóa !');
+        } else if (Auth::user()->cash < 50000) {
+            return redirect()->back()->with('err', 'Bạn không đủ tiền để mua, hãy nạp thêm');
+        } else {
 
-            $cash = Auth::user()->cash - 50000; 
-            Users::where('user_id',Auth::user()->user_id)->update(['cash'=>$cash,'point_50'=>Auth::user()->point_50 + 1]);
-          
+            $cash = Auth::user()->cash - 50000;
+            Users::where('user_id', Auth::user()->user_id)->update(['cash' => $cash, 'point_50' => Auth::user()->point_50 + 1]);
+
             $log = new UsersLog();
             $log->user_id = Auth::user()->user_id;
             $log->trade_type = 9;
             $log->amount = 50000;
             $log->content = 'Mua 1 lượt quay';
-            $log->last_amount = (int)$cash;
+            $log->last_amount = (int) $cash;
             $log->status = 1;
             $log->add_time = time();
             $log->domain = 'sh0phano.com';
             $log->save();
 
-            return redirect()->back()->with('success','Bạn đã mua 1 lượt quay thành công !');   
-
+            return redirect()->back()->with('success', 'Bạn đã mua 1 lượt quay thành công !');
         }
-
-
     }
-
-
-
-
 }
-
-

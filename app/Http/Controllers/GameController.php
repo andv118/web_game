@@ -4,29 +4,246 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Users;
-use App\Models\Settings;
-use App\Models\Slides;
-use App\Models\Danhmuc;
+use App\Models\UsersBuy;
+use App\Models\UsersLog;
 use App\Models\Ngocrong;
 use App\Models\Pubg;
 use App\Models\Freefire;
 use App\Models\Lienquan;
 use App\Models\Random;
-use Hash;
-use Session;
 use Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
+use App\Object\Game\GameNgocRong;
+
 
 class GameController extends Controller
 {
+
+    /*********************** Ngọc Rồng User ***************/
+    /**
+     * Get list tài khoản ngọc rồng
+     * @param string
+     * @return view
+     */
+    public function ngoc_rong($param, Request $request)
+    {
+        $pagination = 20;
+        $userCash = Auth::user()->cash;
+        $ngocrong = new GameNgocRong();
+        $keyword  = $request->input('keyword');
+        $id       = $request->input('id');
+        $status   = $request->input('status');
+        $bongtai  = $request->input('bongtai');
+        $detu     = $request->input('detu');
+        $hanhtinh = $request->input('hanhtinh');
+        $server   = $request->input('servers');
+        $dangky   = $request->input('dangky');
+        $price    = $request->input('price');
+
+        $price1 = $this->progressPrice($price)['price1'];
+        $price2 = $this->progressPrice($price)['price2'];
+
+        if ($param == 'all') {
+            $title = "Tài khoản ngọc rồng";
+        } elseif ($param == 'tam-trung') {
+            $title = "Tài khoản ngọc rồng tầm trung";
+            $price1 = 0;
+            $price2 = 300000;
+        } else {
+            return redirect()->route('index');
+        }
+
+        $data = Ngocrong::query()
+            ->note($keyword)
+            ->id($id)
+            ->price($price1, $price2)
+            ->status($status)
+            ->bongtai($bongtai)
+            ->detu($detu)
+            ->hanhtinh($hanhtinh)
+            ->server($server)
+            ->dangky($dangky)
+            ->whereRaw("IF(active = 0, cost > " . $userCash . ", cost > 0)")
+            ->orderBy('stick', 'desc')
+            ->orderBy('date', 'desc')
+            ->paginate($pagination);
+        // dd($data);
+        // luu session old    
+        session()->flashInput($request->input());
+        return view('user/ngocrong/index', compact('title', 'data', 'ngocrong'));
+    }
+
+    /**
+     * Xử lý việc chọn giá cả
+     * @param int
+     * @return array
+     */
+    public function progressPrice($price)
+    {
+        $price1 = null;
+        $price2 = null;
+        switch ($price) {
+            case 1:
+                $price1 = 1;
+                $price2 = 50000;
+                break;
+            case 2:
+                $price1 = 50000;
+                $price2 = 200000;
+                break;
+            case 3:
+                $price1 = 200000;
+                $price2 = 500000;
+                break;
+            case 4:
+                $price1 = 500000;
+                $price2 = 1000000;
+                break;
+            case 5:
+                $price1 = 1000000;
+                break;
+            case 6:
+                $price1 = 5000000;
+                break;
+            case 7:
+                $price1 = 10000000;
+                break;
+        }
+        return [
+            'price1' => $price1,
+            'price2' => $price2,
+        ];
+    }
+
+    /**
+     * Get tài khoản ngọc rồng chi tiết theo id
+     * @param string
+     * @return view
+     */
+    public function chi_tiet_ngoc_rong($id)
+    {
+        $ngocrong = new GameNgocRong();
+        if (isset($id)) {
+            $data = Ngocrong::where('id', $id)
+                ->where('type', 0)
+                ->get();
+            if (count($data) > 0) {
+                $data2 = Ngocrong::where('id', '<>', $id)
+                    ->where('status', 0)
+                    ->inRandomOrder()
+                    ->take(8)
+                    ->get();
+                return view('user/chitietngocrong/index', compact('data', 'data2', 'ngocrong'));
+            } else {
+                return redirect()->route('index');
+            }
+        }
+    }
+
+    public function thanh_toan_ngoc_rong(Request $request)
+    {
+        $id = $request->input('id');
+        $cost = $request->input('cost');
+        $root = request()->root();
+        $userPostId = null;
+        $trade = 5; // mua tai khoan
+        $UserPostTrade = 7; // ban tai khoan
+        // kiểm tra đầu vào
+        $locked = Auth::user()->locked;
+        $cashUser = Auth::user()->cash;
+        $user_id = Auth::user()->user_id;
+        if ($locked == 1) {
+            return redirect()->back()->withErrors('Tài khoản của bạn đã bị chặn giao dịch');
+        } elseif ($cashUser < $cost) {
+            return redirect()->back()->withErrors('Tài khoản không đủ tiền để thực hiện giao dịch');
+        }
+
+        // trừ tiền người mua - cộng tiền người bán
+        $lastCash = $cashUser - $cost;
+        Users::query()
+            ->UserId($user_id)
+            ->update(['cash' => $lastCash]);
+
+        $ngocRong = Ngocrong::query()
+            ->id($id)
+            ->select('user_post_id')
+            ->limit(1)
+            ->first();
+        $userPostId = $ngocRong->user_post_id;
+        if (Users::query()->UserId($userPostId)->count() > 0) {
+            // ton tai user post id trong table users -> cong tien
+            $cashUserPost = Users::query()->UserId($userPostId)->first();
+            $lastCashUserPost = $cashUserPost->cash + $cost;
+            Users::query()
+                ->UserId($userPostId)
+                ->update(['cash' => $lastCashUserPost]);
+        }
+
+        // update status ngoc rong
+        Ngocrong::where('id', $id)->update(['status' => 1, 'active' => 1]);
+
+        // xoa anh
+        $gameNgocRong = new GameNgocRong();
+        $gameNgocRong->deleteImage($id);
+
+        // insert userLog nguoi mua
+        $log = new UsersLog();
+        $log->user_id = $user_id;
+        $log->trade_type = $trade;
+        $log->amount = $cost;
+        $log->last_amount = $lastCash;
+        $log->content = 'Mua tài khoản Ngọc Rồng' . ' #' . $id;
+        $log->add_time = time();
+        $log->domain = $root;
+        $log->save();
+
+        // insert userLog người bán
+        if (Users::query()->UserId($userPostId)->count() > 0) {
+            // ton tai user post id trong table users -> cong tien
+            $cashUserPost = Users::query()->UserId($userPostId)->first();
+
+            $log = new UsersLog();
+            $log->user_id = $userPostId;
+            $log->trade_type = $UserPostTrade;
+            $log->amount = $cost;
+            $log->last_amount = $cashUserPost->cash;
+            $log->content = 'Bán tài khoản Ngọc Rồng' . ' #' . $id;
+            $log->add_time = time();
+            $log->domain = $root;
+            $log->save();
+        }
+
+        // insert usersBuy Người mua
+        $ngocRongData = Ngocrong::query()->id($id)->first();
+
+        $userBuy = new UsersBuy();
+        $userBuy->user_id = $user_id;
+        $userBuy->game_type = 3;
+        $userBuy->type = "Ngọc Rồng";
+        $userBuy->cost = $cost;
+        $userBuy->desc = 'Ngọc Rồng #' . $id;
+        $userBuy->info = $ngocRongData->info;
+        $userBuy->status = 1;
+        $userBuy->add_time = time();
+        $userBuy->domain = $root;
+        $userBuy->save();
+        $trans_id = $userBuy->id;
+
+
+        $massage =  'Giao dịch thành công, mã giao dịch #' . $trans_id . '. Hãy kiểm tra <b>Tài khoản đã mua</b> trong Menu giao dịch';
+        return redirect()->back()->with('message', $massage);
+    }
+
+    /*********************** Ngọc Rồng Admin ***************/
 
     public function tk_ngocrong(Request $request)
     {
         $pagination = 30;
 
+        $ngocrong = new GameNgocRong();
         $id = $request->input('id');
         $infor = $request->input('infor');
         $user_post = $request->input('user_post');
@@ -34,9 +251,7 @@ class GameController extends Controller
 
         $total = Ngocrong::count();
 
-        // dd($request->input());
-
-        $ngocrong = Ngocrong::leftJoin('users', 'users.user_id', '=', 'ngoc_rong.user_post_id')
+        $data = Ngocrong::leftJoin('users', 'users.user_id', '=', 'ngoc_rong.user_post_id')
             ->select('ngoc_rong.*', 'users.name')
             ->id($id)
             ->status($status)
@@ -53,34 +268,20 @@ class GameController extends Controller
             'status'    => $status,
         ];
 
-        return view('admin/ngocrong/index', compact('dataBack', 'total', 'ngocrong'));
+        return view('admin/ngocrong/index', compact('dataBack', 'total', 'data', 'ngocrong'));
     }
 
     public function delete_ngocrong($id)
     {
-        $data = Ngocrong::where('id', $id)->get();
-        if (count($data) > 0) {
+        if (Ngocrong::where('id', $id)->count() > 0) {
+            // delete db
             Ngocrong::where('id', $id)->delete();
             // delete image
-            // delete thumb
-            $thumb = glob("public/client/assets/upload/thumb-" . $id . "-nr*");
-            foreach ($thumb as $key => $image) {
-                $image = str_replace('public/', "", $image);
-                $file_path = public_path($image); // app_path("public/test.txt");
-                if (File::exists($file_path)) File::delete($file_path);
-            }
-
-            // delete image
-            $arr = glob("public/client/assets/upload/image-" . $id . "-nr*");
-            foreach ($arr as $key => $image) {
-                $image = str_replace('public/', "", $image);
-                $file_path = public_path($image); // app_path("public/test.txt");
-                if (File::exists($file_path)) File::delete($file_path);
-            }
-
+            $gameNgocRong = new GameNgocRong();
+            $gameNgocRong->deleteImage($id);
             return redirect()->back()->with('message', 'Xóa thành công!');
         }
-        return redirect()->back('message', 'Xóa thất bại!');
+        return redirect()->back()->withErrors('Xóa thất bại!');
     }
 
     public function add_ngocrong(Request $request)
@@ -115,7 +316,7 @@ class GameController extends Controller
         $server   = $request->input('server');
         $hanhtinh = $request->input('hanhtinh');
         $detu     = $request->input('detu');
-        $bongtai     = $request->input('bongtai');
+        $bongtai  = $request->input('bongtai');
         $note     = $request->input('note');
         $active   = $request->input('active');
         $stick    = $request->input('stick');
@@ -124,19 +325,11 @@ class GameController extends Controller
         $status = 0;
         $img = '';
 
-
         // check infor(acc) đã tồn tại
-        $count = Ngocrong::query()
-            ->where('info', '=', $infor)
-            ->select('id as counter')
-            ->limit(1)
-            ->get()
-            ->toArray();
-
-        if (sizeof($count) == 1) {
-            return redirect()->back()->with('error', 'Infor (Tài khoản) đã tồn tại!');
+        if (Ngocrong::where('info', '=', $infor)->count() > 0) {
+            return redirect()->back()->withErrors('Infor (Tài khoản) đã tồn tại!');
         }
-
+        // insert db
         $arrInsert = [
             'user_post_id' => $user_id,
             'type' => $type,
@@ -155,54 +348,41 @@ class GameController extends Controller
             'add_time' => time(),
             'stick' => $stick,
         ];
+        Ngocrong::insert($arrInsert);
 
-        // Xử lý ảnh
+        // upload anh
         if ($request->hasFile('thumb') && $request->hasFile('imginfo')) {
-             $folder = 'assets/upload/';
-            Ngocrong::insert($arrInsert);
             // get id last insert
             $lastIdInsert = DB::getPdo()->lastInsertId();
-
             $thumb = $request->file('thumb');
             $arrInfor = $request->file('imginfo');
-            $path = 'public\client\assets\upload';
-
-            $thumbDuoiFile = $thumb->getClientOriginalExtension();
-            $name = $folder . 'thumb-' . $lastIdInsert . '-nr.' . $thumbDuoiFile;
-            Storage::put($name,  File::get($thumb));
-
-            foreach ($arrInfor as $k => $fileInfor) {
-                $stt = $k + 1;
-                $fileInforDuoiFile = $fileInfor->getClientOriginalExtension();
-                $name = $folder . 'image-' . $lastIdInsert . '-nr_' . $stt . '.' . $fileInforDuoiFile;
-                Storage::put($name,  File::get($fileInfor));
-            }
+            $ngocrong = new GameNgocRong();
+            $ngocrong->uploadImage($lastIdInsert, $thumb, $arrInfor);
         }
+
         return redirect()->back()->with('message', 'Thêm tài khoản thành công!');
     }
 
     public function change_ngocrong(Request $request)
     {
-    
         $this->validate(
             $request,
             [
                 'cost' => 'required|integer|min:0|max:100000000',
-             
             ],
-    
+
             [
                 'required' => ':attribute Không được để trống',
                 'min' => ':attribute Không được nhỏ hơn :min',
                 'max' => ':attribute Không được lớn hơn :max',
                 'integer' => ':attribute Chỉ được nhập số',
             ],
-    
+
             [
                 'cost' => 'Số tiền',
             ]
         );
-    
+
         // dd($request->input());
         $id       = $request->input('id');
         $infor    = $request->input('infor');
@@ -211,7 +391,7 @@ class GameController extends Controller
         $server   = $request->input('server');
         $hanhtinh = $request->input('hanhtinh');
         $detu     = $request->input('detu');
-        $bongtai     = $request->input('bongtai');
+        $bongtai  = $request->input('bongtai');
         $note     = $request->input('note');
         $active   = $request->input('active');
         $stick    = $request->input('stick');
@@ -239,242 +419,9 @@ class GameController extends Controller
         return redirect()->back()->with('message', 'Cập nhật tài khoản thành công!');
     }
 
-    public function tk_random(Request $request)
-    {
-        $pagination = 30;
+   
 
-        $id = $request->input('id');
-        $infor = $request->input('infor');
-        $user_post = $request->input('user_post');
-        $status = $request->input('status');
-        $type = $request->input('type');
-        $strType = null;
-        switch ($type) {
-            case 1:
-                $strType = 'Random Ngọc Rồng';
-                break;
-            case 2:
-                $strType = 'Random PUBG';
-                break;
-            case 3:
-                $strType = 'Random Liên Quân';
-                break;
-            case 4:
-                $strType = 'Random Free Fire';
-                break;
-            case 5:
-                $strType = 'Random Liên Minh';
-                break;
-            case 6:
-                $strType = 'Mở Rương';
-                break;
-        }
-
-        $total = Random::count();
-
-        // dd($request->input());
-
-        $random = Random::leftJoin('users', 'users.user_id', '=', 'random.user_post_id')
-            ->select('random.*', 'users.name')
-            ->id($id)
-            ->status($status)
-            ->infor($infor)
-            ->CTV($user_post)
-            ->type($strType)
-            ->orderBy('date', 'desc')
-            ->paginate($pagination);
-
-        $dataBack = [
-            'id'        => $id,
-            'infor'     => $infor,
-            'user_post' => $user_post,
-            'status'    => $status,
-            'type'      => $type,
-        ];
-        return view('admin/random/index', compact('dataBack', 'total', 'random'));
-    }
-
-    public function create_random(Request $request)
-    {
-        $this->validate(
-            $request,
-            [
-                'type' => 'required',
-                'category' => 'required',
-                'infor' => 'required',
-            ],
-
-            [
-                'required' => ':attribute Không được để trống',
-            ],
-
-            [
-                'type' => 'Danh mục',
-                'category' => 'Loại',
-                'infor' => 'Tài khoản',
-            ]
-        );
-
-        $arrCost = [
-            0 => [20000, 50000, 100000],
-            1 => [10000, 50000, 100000],
-            2 => [10000, 50000, 100000],
-            3 => [10000, 50000, 100000],
-            4 => [10000, 50000, 100000],
-            5 => [10000, 50000, 100000],
-        ];
-
-        $arrCategory = [
-            0 => ['Vận May Ngọc Rồng 20K', 'Vận May Ngọc Rồng 50K', 'Vận May Ngọc Rồng 100K'],
-            1 => ['Vận May Liên Quân 10K', 'Vận May Liên Quân 50K', 'Vận May Liên Quân 100K'],
-            2 => ['Vận May Free Fire 10K', 'Vận May Free Fire 50K', 'Vận May Free Fire 100K'],
-            3 => ['Vận May PUBG 10K', 'Vận May PUBG 50K', 'Vận May PUBG 100K'],
-        ];
-
-        $user_id = Auth::user()->user_id;
-        $status = 0;
-        $type = $request->input('type');
-        $infor = $request->input('infor');
-        $intCategory = $request->input('category');
-
-        // get category
-        $category = '';
-        foreach ($arrCategory[$type] as $k => $v) {
-            if ($intCategory == $k) {
-                $category = $v;
-            }
-        }
-
-        // get cost
-        $cost = $arrCost[$type][$intCategory];
-        $cost_atm = (int) round(($cost * 80) / 100);
-
-        // get type
-        switch ($type) {
-            case 0:
-                $type = "Random Ngọc Rồng";
-                break;
-            case 1:
-                $type = "Random PUBG";
-                break;
-            case 2:
-                $type = "Random Liên Quân";
-                break;
-            case 3:
-                $type = "Random Free Fire";
-                break;
-            case 4:
-                $type = "Random Liên Minh";
-                break;
-            case 5:
-                $type = "Random Mở Rương";
-                break;
-        }
-
-        $arrInsert = [
-            'user_post_id' => $user_id,
-            'type' => $type,
-            'info' => $infor,
-            'cost' => $cost,
-            'cost_atm' => $cost_atm,
-            'status' => $status,
-            'add_time' => time(),
-            'category' => $category,
-        ];
-
-        Random::insert($arrInsert);
-
-        // dd($arrInsert);
-        return redirect()->back()->with('message', 'Thêm tài khoản thành công!');
-    }
-
-    public function update_random(Request $request)
-    {
-        // dd($request->input());
-
-        $arrCost = [
-            0 => [20000, 50000, 100000],
-            1 => [10000, 50000, 100000],
-            2 => [10000, 50000, 100000],
-            3 => [10000, 50000, 100000],
-            4 => [10000, 50000, 100000],
-            5 => [10000, 50000, 100000],
-        ];
-
-        $arrCategory = [
-            0 => ['Vận May Ngọc Rồng 20K', 'Vận May Ngọc Rồng 50K', 'Vận May Ngọc Rồng 100K'],
-            1 => ['Vận May Liên Quân 10K', 'Vận May Liên Quân 50K', 'Vận May Liên Quân 100K'],
-            2 => ['Vận May Free Fire 10K', 'Vận May Free Fire 50K', 'Vận May Free Fire 100K'],
-            3 => ['Vận May PUBG 10K', 'Vận May PUBG 50K', 'Vận May PUBG 100K'],
-        ];
-
-        $id          = $request->input('id');
-        $type        = $request->input('type');
-        $infor       = $request->input('infor');
-        $intCategory = $request->input('category');
-
-        // get category
-        $category = '';
-        foreach ($arrCategory[$type] as $k => $v) {
-            if ($intCategory == $k) {
-                $category = $v;
-            }
-        }
-
-        // get cost
-        $cost = $arrCost[$type][$intCategory];
-        $cost_atm = (int) round(($cost * 80) / 100);
-
-        // get type
-        switch ($type) {
-            case 0:
-                $type = "Random Ngọc Rồng";
-                break;
-            case 1:
-                $type = "Random PUBG";
-                break;
-            case 2:
-                $type = "Random Liên Quân";
-                break;
-            case 3:
-                $type = "Random Free Fire";
-                break;
-            case 4:
-                $type = "Random Liên Minh";
-                break;
-            case 5:
-                $type = "Random Mở Rương";
-                break;
-        }
-
-        $arrUpdate = [
-            'type' => $type,
-            'info' => $infor,
-            'cost' => $cost,
-            'cost_atm' => $cost_atm,
-            'category' => $category,
-        ];
-
-        if ($id != null) {
-            Random::query()
-                ->id($id)
-                ->update($arrUpdate);
-        }
-
-        // dd($arrInsert);
-        return redirect()->back()->with('message', 'Cập nhật tài khoản thành công!');
-    }
-
-    public function delete_random($id)
-    {
-        $data = Random::where('id', $id)->get();
-        if (count($data) > 0) {
-            Random::where('id', $id)->delete();
-            return redirect()->back()->with('message', 'Xóa thành công!');
-        }
-        return redirect()->back('message', 'Xóa thất bại!');
-    }
-
+    /*********************** Game khac User ***************/
     public function tk_pubg()
     {
 

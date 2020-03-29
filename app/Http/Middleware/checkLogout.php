@@ -18,9 +18,9 @@ class checkLogout
      */
     public function handle($request, Closure $next)
     {
-        if(Session::has('admin_id')){
+        if (Session::has('admin_id')) {
             return redirect()->route('admin.home');
-       }
-             return $next($request);
+        }
+        return $next($request);
     }
 }

@@ -17,6 +17,7 @@ use App\Models\UsersBuy;
 use App\Models\UsersLog;
 use App\Models\UsersService;
 use App\Models\wheel;
+use App\Object\ObjectVongQuay;
 use Hash;
 use Session;
 use Auth;
@@ -345,11 +346,20 @@ class ChargeController extends Controller
         return redirect()->route('admin.giao-dich.history_buy')->with('message', 'Xóa lịch sử thành công');
     }
 
-    public function history_random()
-    {
+    public function history_whell(Request $request)
+    {   
+        $id = $request->input('id');
+        $started_at = $request->input('started_at');
+        $ended_at = $request->input('started_at');
+        // dd($id);
+        $wheel = new ObjectVongQuay();
         $total = Wheel::count();
-        $data = Wheel::join('users', 'users.user_id', '=', 'wheel_log.user_id')->orderBy('add_time', 'desc')->paginate(20);
+        $data = Wheel::join('users', 'users.user_id', '=', 'wheel_log.user_id')
+        ->select('wheel_log.*', 'users.name')
+        ->id($id)
+        ->time($started_at, $ended_at)
+        ->orderBy('date', 'desc')->paginate(20);
 
-        return view('admin/vongquay/index', compact('data', 'total'));
+        return view('admin/vongquay/index', compact('data', 'total', 'wheel'));
     }
 }

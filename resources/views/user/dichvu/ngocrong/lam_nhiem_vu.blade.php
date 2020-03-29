@@ -86,7 +86,7 @@
 					<div class="col-md-5 hidden-xs hidden-sm">
 						<div class="row">
 							<div class="news_image">
-								<img src="public/client/assets/images/m4lJ0Vkd2L_1560575828.jpg" alt="Bán vàng">
+								<img src="public/client/assets/images/danhmuc/lamnv.jpg" alt="Bán vàng">
 							</div>
 						</div>
 						<div class="row">
