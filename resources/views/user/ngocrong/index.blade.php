@@ -28,7 +28,7 @@
                 <div class="col-md-3 col-sm-4 p-5 field-search">
                     <div class="input-group c-square">
                         <span class="input-group-addon">Mã số</span>
-                        <input type="text" class="form-control c-square" value="{{old('id')}}" placeholder="Mã số" name="id">
+                        <input type="number" class="form-control c-square" value="{{old('id')}}" placeholder="Mã số" name="id">
                     </div>
                 </div>
 
@@ -65,17 +65,10 @@
                 <div class="col-md-3 col-sm-4 col-xs-12  p-5 field-search">
                     <div class="input-group c-square">
                         <span class="input-group-addon">Trạng thái</span>
-                        <select name="status" style="" class="form-control c-square">
-                            <option value="">Tất cả</option>
-                            <option value="0" <?php if (old('status') == 0) {
+                        <select name="status" class="form-control c-square">
+                            <option value="0" <?php if (old('status') == '0') {
                                                     echo 'selected';
                                                 } ?>>Chưa bán</option>
-                            <option value="1" <?php if (old('status') == 1) {
-                                                    echo 'selected';
-                                                } ?>>Đã bán</option>
-                            <option value="2" <?php if (old('status') == 2) {
-                                                    echo 'selected';
-                                                } ?>>Đã đặt cọc</option>
                         </select>
                     </div>
                 </div>
@@ -188,15 +181,32 @@
     <!-- END: Tim kiem -->
 
     <!-- BEGIN: List item -->
+    @if(sizeof($data) == 0)
+    <div class="alert alert-info">
+        <strong>
+            <a href="{{Route('ngoc_rong','all')}}">
+                <p class="text-center text-muted">MÃ SỐ NICK NÀY CÓ NGƯỜI ĐÃ MUA TRƯỚC ĐÓ HOẶC ĐANG ĐẶT CỌC BẠN VUI LÒNG CHỌN NICK KHÁC CẢM ƠN !</p>
+            </a>
+        </strong>
+    </div>
+    @elseif(old('id') != null && isset($data[0]->active) && $data[0]->active == 0)
+    <div class="alert alert-info">
+        <strong>
+            <a href="{{Route('ngoc_rong','all')}}">
+                <p class="text-center text-muted">MÃ SỐ NICK NÀY CÓ NGƯỜI ĐÃ MUA TRƯỚC ĐÓ HOẶC ĐANG ĐẶT CỌC BẠN VUI LÒNG CHỌN NICK KHÁC CẢM ƠN !</p>
+            </a>
+        </strong>
+    </div>
+    @else
     <div class="row row-flex  item-list">
         @foreach($data as $value)
-
         <div class="col-sm-6 col-md-3">
             <div class="classWithPad">
                 <div class="image">
                     <a title="Xem chi tiết" href="{{Route('chi_tiet_ngoc_rong',$value->id)}}">
                         <img src="{{ $ngocrong->getThumbnail($value->id) }}">
-                        <span class="ms">MS: <?php echo (int) $value->id; ?></span>
+                        <span class="ms">MS:
+                            <?php echo (int) $value->id; ?></span>
                     </a>
                 </div>
 
@@ -245,10 +255,9 @@
                 </div>
             </div>
         </div>
-
         @endforeach
-
     </div>
+    @endif
     <!-- END: List item -->
 
     <!-- Pagination -->

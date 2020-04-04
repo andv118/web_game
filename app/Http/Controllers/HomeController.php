@@ -3,70 +3,196 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use App\Models\Users;
 use App\Models\Ngocrong;
 use App\Models\NapCham;
-use App\Models\Pubg;
-use App\Models\Lienquan;
-use App\Models\Freefire;
 use App\Models\Random;
-use Hash;
-use Session;
-use Auth;
-
+use App\Models\UsersService;
+use App\Models\Wheel;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
     public function Home()
     {
-        //count user
-        $users = Users::count();
-
-        //doanh thu
         $day = getdate()["mday"];
         $mon = getdate()["mon"];
         $year = getdate()["year"];
+        $firstDayOfMonth = Carbon::now()->firstOfMonth()->toDateTimeString(); // ngay dau tien cua thang
 
-        $doanhthuthang = NapCham::status(1)
-            ->whereMonth('date', $mon)
-            ->whereYear('date', $year)
-            ->sum('amount');
-        $doanhthungay = NapCham::status(1)
-            ->whereYear('date', $year)
-            ->whereMonth('date', $mon)
-            ->whereDay('date', $day)
-            ->sum('amount');
+        // tong user    
+        $users = Users::count();
+        $usersPerformance = Users::where('date', '>=', $firstDayOfMonth)->count();
+        // tong so du
+        $amounts = Users::where('is_admin', 0)->sum('cash');
+        $amountsPerformance = Users::where('date', '<', $firstDayOfMonth)->where('is_admin', 0)->sum('cash');
+        $amountsPercent = (($amounts - $amountsPerformance) / $amountsPerformance) * 100;
 
-        $arrdoanhthucacthang = array();
-        for ($i = 1; $i <= 12; $i++) {
-            $arrdoanhthucacthang[$i] = NapCham::status(1)
-                ->whereMonth('date', $i)
-                ->whereYear('date', $year)
-                ->sum('amount');
-        }
+        // the cao
+        $cards = NapCham::where('status', 1)->count();
+        $cardsPerformance = NapCham::where('date', '>=', $firstDayOfMonth)->count();
 
-        // acc còn lại
-        $pubg1 = Pubg::where('status', 0)->count();
-        $lqm1 = Lienquan::where('status', 0)->count();
-        $ff1 = Freefire::where('status', 0)->count();
-        $nr1 = Ngocrong::where('status', 0)->count();
-        $random1 = Random::where('status', 0)->count();
+        $cardsAmount = NapCham::where('status', 1)->sum('amount');
+        $cardsAmountPerformance = NapCham::where('status', 1)->where('date', '>=', $firstDayOfMonth)->sum('amount');
 
-        // acc đã bán
-        $pubg2 = Pubg::where('status', 1)->count();
-        $lqm2 = Lienquan::where('status', 1)->count();
-        $ff2 = Freefire::where('status', 1)->count();
-        $nr2 = Ngocrong::where('status', 1)->count();
-        $random2 = Random::where('status', 1)->count();
+        // doanh thu
+        $previousMonth = Carbon::now()->subMonth()->format('m');
 
-        $acc_conlai = $pubg1 + $lqm1 + $nr1 + $ff1 + $random1;
-        $acc_daban = $pubg2 + $lqm2 + $nr2 + $ff2 + $random2;
+        $doanhThu = array();
+        $doanhThu['ThangTruoc'] = $this->getDoanhThu($year, $previousMonth, null);
+        $doanhThu['ThangNay'] = $this->getDoanhThu($year, $mon, null);
+        $doanhThu['HomNay'] = $this->getDoanhThu($year, $mon, $day);
+        $doanhThu['tong'] = $this->getDoanhThu(null, null, null);
 
-        return view('admin/home', compact('users', 'doanhthuthang', 'arrdoanhthucacthang', 'doanhthungay', 'acc_daban', 'acc_conlai'));
+        // so nick da ban
+        $acc = array();
+        $acc['ThangTruoc'] = $this->getNickDaBan($year, $previousMonth, null);
+        $acc['ThangNay'] = $this->getNickDaBan($year, $mon, null);
+        $acc['HomNay'] = $this->getNickDaBan($year, $mon, $day);
+        $acc['tong'] = $this->getNickDaBan(null, null, null);
+
+        // doanh thu game (thống kê theo ngày/tháng)
+
+        $arrdoanhthugame = array();
+
+        $arrdoanhthugame['ngoc_rong']['day'] = $this->doanhThuNgocRong($year, $mon, $day);
+        $arrdoanhthugame['ngoc_rong']['mon'] = $this->doanhThuNgocRong($year, $mon, null);
+
+        $arrdoanhthugame['random']['day'] =  $this->doanhThuRandom($year, $mon, $day);
+        $arrdoanhthugame['random']['mon'] = $this->doanhThuRandom($year, $mon, null);
+
+        $arrdoanhthugame['dich_vu']['day'] = $this->doanhThuServie($year, $mon, $day);
+        $arrdoanhthugame['dich_vu']['mon'] = $this->doanhThuServie($year, $mon, null);
+
+        $arrdoanhthugame['vong_quay']['day'] = $this->doanhThuWheel($year, $mon, $day);
+        $arrdoanhthugame['vong_quay']['mon'] = $this->doanhThuWheel($year, $mon, null);
+
+        return view('admin/home', compact(
+            'arrdoanhthugame',
+            'day',
+            'users',
+            'usersPerformance',
+            'amounts',
+            'amountsPercent',
+            'cards',
+            'cardsPerformance',
+            'cardsAmount',
+            'cardsAmountPerformance',
+            'doanhThu',
+            'acc'
+        ));
     }
 
+    /**
+     * get doanh thu theo ngày tháng năm
+     * @param int, int, int
+     * @return int
+     */
+    public function getDoanhThu($year, $mon, $day)
+    {
+        $doanhthu = $this->doanhThuNgocRong($year, $mon, $day) + $this->doanhThuRandom($year, $mon, $day) + $this->doanhThuServie($year, $mon, $day);
+        return $doanhthu;
+        // $amountNgocRong = Ngocrong::where('status', 1)
+        //     ->year($year)
+        //     ->month($mon)
+        //     ->day($day)
+        //     ->sum('cost');
+        // $amountRandom = Random::where('status', 1)
+        //     ->year($year)
+        //     ->month($mon)
+        //     ->day($day)
+        //     ->sum('cost');
+        // $amountService = UsersService::where('status', 3)
+        //     ->year($year)
+        //     ->month($mon)
+        //     ->day($day)
+        //     ->sum('total_price');
+        // return ($amountNgocRong + $amountRandom + $amountService);
+    }
 
+    /**
+     * get nick đã bán theo ngày tháng năm
+     * @param int, int, int
+     * @return int
+     */
+    public function getNickDaBan($year, $mon, $day)
+    {
+        $amountNgocRong = Ngocrong::where('status', 1)
+            ->year($year)
+            ->month($mon)
+            ->day($day)
+            ->count();
+        $amountRandom = Random::where('status', 1)
+            ->year($year)
+            ->month($mon)
+            ->day($day)
+            ->count();
+        return ($amountNgocRong + $amountRandom);
+    }
+
+    /**
+     * Doanh thu game ngọc rồng theo ngày tháng năm
+     * @param string
+     * @return int
+     */
+    public function doanhThuNgocRong($year, $mon, $day)
+    {   
+        $type = 0; // ngoc rong
+        $amountNgocRong = Ngocrong::where('status', 1)
+            ->where('type', $type)
+            ->year($year)
+            ->month($mon)
+            ->day($day)
+            ->sum('cost');
+        return $amountNgocRong;
+    }
+
+    /**
+     * Doanh thu game random theo ngày tháng năm
+     * @param string
+     * @return int
+     */
+    public function doanhThuRandom($year, $mon, $day)
+    {
+        $amountRandom = Random::where('status', 1)
+            ->year($year)
+            ->month($mon)
+            ->day($day)
+            ->sum('cost');
+        return $amountRandom;
+    }
+
+    /**
+     * Doanh thu game dịch vụ theo ngày tháng năm
+     * @param string
+     * @return int
+     */
+    public function doanhThuServie($year, $mon, $day)
+    {
+        $amountService = UsersService::where('status', 3)
+            ->year($year)
+            ->month($mon)
+            ->day($day)
+            ->sum('total_price');
+        return $amountService;
+    }
+
+    /**
+     * Doanh thu game vòng quay theo ngày tháng năm
+     * @param string
+     * @return int
+     */
+    public function doanhThuWheel($year, $mon, $day)
+    {
+        $amountWheel = Wheel::query()
+            ->year($year)
+            ->month($mon)
+            ->day($day)
+            ->sum('cost');
+        return $amountWheel;
+    }
+
+    /*************************************************8 */
     public function ManageUsers(Request $req)
     {
         $pagination = 30;
@@ -95,13 +221,11 @@ class HomeController extends Controller
         return view('admin/account/manage-users', compact('data', 'total', 'title', 'dataBack'));
     }
 
-
     public function CreateUsers()
     {
 
         return view('admin/account/create');
     }
-
 
     public function SaveUsers(Request $req)
     {

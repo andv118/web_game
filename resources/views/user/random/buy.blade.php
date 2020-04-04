@@ -1,5 +1,5 @@
 <!-- BEGIN: Modal Buy -->
-<div class="modal fade" id="buy_random" aria-modal="true">
+<div class="modal fade" id="buy_random_ngocrong" aria-modal="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
 

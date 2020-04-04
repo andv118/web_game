@@ -101,7 +101,7 @@
                     ?>
                         <td>{{$v->date}}</td>
                         <td>{{$v->id}}</td>
-                        <td>{{$v->trade_name}}</td>
+                        <td>{{ $service->getTradeType($v->trade_type) }}</td>
                         <td> <span class="label label-{{$label}}">{{$v->desc_status}}</span></td>
                         <td>{{number_format($v->total_price,0) . "đ"}}</td>
                         <td><button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#edit_modal" data-acc="{{$v->customer_acc}}" data-pass="{{$v->customer_pass}}" data-action="{{$v->customer_action}}">Xem chi tiết </button></td>

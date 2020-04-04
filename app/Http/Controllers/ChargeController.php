@@ -17,11 +17,13 @@ use App\Models\UsersBuy;
 use App\Models\UsersLog;
 use App\Models\UsersService;
 use App\Models\wheel;
+use App\Object\ObjectService;
+use App\Object\ObjectTransaction;
 use App\Object\ObjectVongQuay;
 use Hash;
 use Session;
 use Auth;
-
+use Illuminate\Support\Facades\DB;
 
 class ChargeController extends Controller
 {
@@ -156,18 +158,19 @@ class ChargeController extends Controller
      */
     public function history_service(Request $request)
     {
-        $pagination = 30;
+        $pagination  = 30;
         $user_name   = $request->input('user_name');
         $status      = $request->input('status');
-        $trade_type = $request->input('transaction');
+        $trade_type  = $request->input('transaction');
         $started_at  = $request->input('started_at');
         $ended_at    = $request->input('ended_at');
+
+        $service = new ObjectService();
 
         // Get dữ liệu lịch sử dịch vụ
         $data = UsersService::query()
             ->join('users', 'users.user_id', '=', 'users_service.user_id')
-            ->join('service_trade_type', 'service_trade_type.trade_id', '=', 'users_service.trade_type')
-            ->select('users_service.*', 'users.name', 'service_trade_type.trade_name')
+            ->select('users_service.*', 'users.name')
             ->tradeType($trade_type)
             ->status($status)
             ->time($started_at, $ended_at)
@@ -184,7 +187,7 @@ class ChargeController extends Controller
         ];
 
         // print_r($data);
-        return view('admin/service/index', compact('data', 'dataBack'));
+        return view('admin/service/index', compact('data', 'dataBack', 'service'));
     }
 
     /**
@@ -197,7 +200,10 @@ class ChargeController extends Controller
         $content = $request->input('content');
         $status  = $request->input('status');
         $id      = (int) $request->input('id');
-
+        $price   = $request->input('price');
+        $user_id = null;
+        $checkStatus = null;
+        $user_cash = Auth::user()->cash;
         $descStatus = '';
         switch ($status) {
             case 1:
@@ -214,17 +220,38 @@ class ChargeController extends Controller
                 break;
         }
 
+        // hủy dịch vụ hoàn tiền
+        $userService = UsersService::query()->id($id)->first();
+        $user_id = $userService->user_id;
+        $checkStatus = UsersService::query()->id($id)->status(4)->count();
+        // dd($user_id);
+        if ($checkStatus == 0 && $user_id != null && $status == 4) {
+            // cong tien
+            $userLastAmount = $user_cash + $price;
+            Users::query()->userId($user_id)->update(['cash' => $userLastAmount]);
+            // insert hoan tien dich vu
+            $usersLog = new UsersLog();
+            $usersLog->user_id = $user_id;
+            $usersLog->trade_type = 1;
+            $usersLog->content = 'Hoàn tiền đơn dịch vụ #' . $id;
+            $usersLog->amount  = $price;
+            $usersLog->last_amount = $userLastAmount;
+            $usersLog->status = 1;
+            $usersLog->add_time = time();
+            $usersLog->domain = request()->root();
+            $usersLog->save();
+        }
+
+        // update users_service
         $arrUpdate = [
             'status' => $status,
             'desc_status' => $descStatus,
             'description' => $content,
         ];
 
-        // update
         UsersService::query()
             ->where('id', $id)
             ->update($arrUpdate);
-
 
         return back()->with(['message' => 'Update thành công #' . $id]);
     }
@@ -268,11 +295,12 @@ class ChargeController extends Controller
         $started_at  = $request->input('started_at');
         $ended_at    = $request->input('ended_at');
 
+        $transaction = new ObjectTransaction();
+
         // Get dữ liệu lịch sử dịch vụ
         $data = UsersLog::query()
             ->join('users', 'users.user_id', '=', 'users_log.user_id')
-            ->join('transaction_trade_type', 'transaction_trade_type.trade_id', '=', 'users_log.trade_type')
-            ->select('users_log.*', 'users.name', 'transaction_trade_type.trade_name')
+            ->select('users_log.*', 'users.name')
             ->trade($trade_type)
             ->time($started_at, $ended_at)
             ->userName($user_name)
@@ -287,7 +315,7 @@ class ChargeController extends Controller
         ];
 
         // print_r($data);
-        return view('admin/transaction/index', compact('data', 'dataBack'));
+        return view('admin/transaction/index', compact('data', 'dataBack', 'transaction'));
     }
 
     /**
@@ -347,18 +375,16 @@ class ChargeController extends Controller
     }
 
     public function history_whell(Request $request)
-    {   
+    {
         $id = $request->input('id');
         $started_at = $request->input('started_at');
         $ended_at = $request->input('started_at');
         // dd($id);
         $wheel = new ObjectVongQuay();
-        $total = Wheel::count();
-        $data = Wheel::join('users', 'users.user_id', '=', 'wheel_log.user_id')
-        ->select('wheel_log.*', 'users.name')
-        ->id($id)
-        ->time($started_at, $ended_at)
-        ->orderBy('date', 'desc')->paginate(20);
+        $total = DB::table('wheel_log')->count();
+        $data = DB::table('wheel_log')->join('users', 'users.user_id', '=', 'wheel_log.user_id')
+            ->select('wheel_log.*', 'users.name')
+            ->orderBy('date', 'desc')->paginate(20);
 
         return view('admin/vongquay/index', compact('data', 'total', 'wheel'));
     }

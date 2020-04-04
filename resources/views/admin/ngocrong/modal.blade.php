@@ -38,7 +38,7 @@
                                 <span class="input-group-addon"><b>Đăng ký:</b></span>
                                 <select class="form-control c-square c-theme" name="dangky" required>
                                     <option value="">Chọn loại đăng ký</option>
-                                    <option value="1">Ảo</option>
+                                    <option value="1" selected >Ảo</option>
                                     <option value="2">Gmail Full</option>
                                 </select>
                             </div>
@@ -109,7 +109,7 @@
                         <div class="col-lg-12 col-md-12 col-sm-12">
                             <div class="input-group m-b-10 c-square">
                                 <span class="input-group-addon"><b>Ghi chú:</b></span>
-                                <input class="form-control c-square c-theme" name="note" value="" placeholder="Ghi chú cho tài khoản này" rows="6" required=""></input>
+                                <input class="form-control c-square c-theme" name="note" value="Nick Ngon Giá Rẻ" placeholder="Ghi chú cho tài khoản này" rows="6" required=""></input>
                             </div>
                         </div>
                     </div>

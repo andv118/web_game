@@ -50,6 +50,30 @@ class Random extends Model
         return $query;
     }
 
+    public function scopeYear($query, $year)
+    {
+        if ($year != null) {
+            $query->whereYear('date', $year);
+        }
+        return $query;
+    }
+
+    public function scopeMonth($query, $month)
+    {
+        if ($month != null) {
+            $query->whereMonth('date', $month);
+        }
+        return $query;
+    }
+
+    public function scopeDay($query, $day)
+    {
+        if ($day != null) {
+            $query->whereDay('date', $day);
+        }
+        return $query;
+    }
+
 
 }
 

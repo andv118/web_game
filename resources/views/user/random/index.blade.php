@@ -37,59 +37,59 @@
             </div>
 
             <div class="row row-flex-safari game-list" style="margin-top: 20px;">
-                <?php foreach ($data as $val) : ?>
 
-                    <div class="col-sm-6 col-md-3" id="">
-                        <div class="classWithPad">
+                @foreach ($data as $val)
+                <div class="col-sm-6 col-md-3" id="">
+                    <div class="classWithPad">
 
-                            <div class="image">
-                                <a>
-                                    @if($val->cost == 20000)
-                                    <img src="public/client/assets/images/randomnr20k.jpg">
-                                    @elseif($val->cost == 50000)
-                                    <img src="public/client/assets/images/randomnr50k.jpg">
-                                    @elseif($val->cost == 100000)
-                                    <img src="public/client/assets/images/randomnr100k.jpg">
-                                    @endif
-                                    <span class="ms">MS: {{$val->id}}</span>
-                                </a>
-                            </div>
-
-                            <div class="description">
-                                Thử vận may ngay
-                            </div>
-
-                            <div class="attribute_info" style="margin-top: 10px;min-height: 93px;">
-                                <div class="row">
-                                    <div class="col-xs-6 a_att">
-                                        Hành Tinh: <b>???</b>
-                                    </div>
-                                    <div class="col-xs-6 a_att">
-                                        Vũ Trụ: <b>???</b>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="a-more">
-                                <div class="row">
-                                    <div class="col-xs-6">
-                                        <div class="price_item">
-                                            {{number_format($val->cost)}}đ
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-6 ">
-                                        <div class="view">
-                                            <a id="mua_random" data-id="{{$val->id}}" data-type="{{$val->type}}" data-cost="{{$val->cost}}" data-category="{{$val->category}}" data-toggle="modal" data-target="#buy_random">Mua ngay</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
+                        <div class="image">
+                            <a>
+                                @if($val->cost == 20000)
+                                <img src="public/client/assets/images/randomnr20k.jpg">
+                                @elseif($val->cost == 50000)
+                                <img src="public/client/assets/images/randomnr50k.jpg">
+                                @elseif($val->cost == 100000)
+                                <img src="public/client/assets/images/randomnr100k.jpg">
+                                @endif
+                                <span class="ms">MS: {{$val->id}}</span>
+                            </a>
                         </div>
+
+                        <div class="description">
+                            Thử vận may ngay
+                        </div>
+
+                        <div class="attribute_info" style="margin-top: 10px;min-height: 93px;">
+                            <div class="row">
+                                <div class="col-xs-6 a_att">
+                                    Hành Tinh: <b>???</b>
+                                </div>
+                                <div class="col-xs-6 a_att">
+                                    Vũ Trụ: <b>???</b>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="a-more">
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <div class="price_item">
+                                        {{number_format($val->cost)}}đ
+                                    </div>
+                                </div>
+                                <div class="col-xs-6 ">
+                                    <div class="view">
+                                        <a style="cursor:pointer;" id="mua_random" data-id="{{$val->id}}" data-type="{{$val->type}}" data-cost="{{$val->cost}}" data-category="{{$val->category}}" data-toggle="modal" data-target="#buy_random_ngocrong">Mua ngay</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
+                </div>
 
 
-                <?php endforeach ?>
+                @endforeach
             </div>
             <!-- End-->
         </div>
@@ -106,22 +106,20 @@
 
 <script>
     $(document).ready(function() {
-        $('#buy_random').on('show.bs.modal', function(event) {
+        $('#buy_random_ngocrong').on('show.bs.modal', function(event) {
+            var game = 'Ngọc Rồng';
             var button = $(event.relatedTarget) // Button that triggered the modal
             // console.log(123);
             var id = button.data('id')
-            var type = button.data('type') // Extract info from data-* attributes
+            var type = button.data('type')
             var cost = button.data('cost')
             var category = button.data('category')
-            var game = type.replace("Random", " ");
             cost = cost.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")
-
-            console.log(game)
 
             var modal = $(this)
             modal.find('input[name="id"]').val(id)
             modal.find('#id_random').text(id)
-            modal.find('#type').text(type)
+            modal.find('#type').text("Random Ngọc Rồng")
             modal.find('#category').text(category)
             modal.find('#game').text(game)
             modal.find('#cost').text(cost + 'đ')
@@ -135,6 +133,7 @@
     .classWithPad: {
         margin-bottom: 20px !important;
     }
+
 
 
     .classWithPad .image {
@@ -193,36 +192,36 @@
     }
 
 
-     
-
-   @media only screen and (max-width: 768px){
-    .row-flex-safari .classWithPad {
-      height: 400px!important;
-      max-height: 430px!important;
-       margin-bottom: 20px;
-     }
-
-  }
 
 
-   @media only screen and (max-width: 414px){
-    .row-flex-safari .classWithPad {
-      height: 456px!important;
-    max-height: 512px!important;
-       margin-bottom: 20px;
-     }
+    @media only screen and (max-width: 768px) {
+        .row-flex-safari .classWithPad {
+            height: 400px !important;
+            max-height: 430px !important;
+            margin-bottom: 20px;
+        }
 
-  }
-
-
-
-  @media only screen and (max-width: 320px){
-    .row-flex-safari .classWithPad {
-      height: 411px!important;
-      min-height: 450px!important;
     }
 
-  }
+
+    @media only screen and (max-width: 414px) {
+        .row-flex-safari .classWithPad {
+            height: 456px !important;
+            max-height: 512px !important;
+            margin-bottom: 20px;
+        }
+
+    }
+
+
+
+    @media only screen and (max-width: 320px) {
+        .row-flex-safari .classWithPad {
+            height: 411px !important;
+            min-height: 450px !important;
+        }
+
+    }
 </style>
 
 @endsection

@@ -2,104 +2,108 @@
 
 Route::get('/test', 'BaseController@test'); //Trang chủ
 
+Route::get('/maintenance', function () {
+	return view('baotri');
+})->name('baotri');
 
-//------------------------- Giao diện người dùng-------------------------------------
-Route::get('/', 'BaseController@index')->name('index'); //Trang chủ
-Route::get('login', 'BaseController@login')->name('login'); //Trang đăng nhập
-Route::post('login', 'UserController@login_user')->name('login_user'); //Đăng nhập tài khoản user
-Route::get('/register', 'BaseController@register')->name('register'); //Trang đăng ký
-Route::post('/register', 'UserController@register_user')->name('register_user'); //Đăng ký tài khoản user
-Route::get('/logout', 'UserController@logout_user')->name('logout_user'); //Đăng xuất tài khoản user
-Route::get('/logout', 'UserController@logout_user')->name('logout_user'); //Đăng xuất tài khoản user
-Route::get('/nap-the', 'BaseController@nap_the')->name('nap_the'); //Nạp thẻ cào
-Route::get('/profile', 'BaseController@profile')->name('profile'); //Trang profile cá nhân
+Route::group(['prefix' => '/', 'middleware' => ['CheckMaintenance']], function () {
 
-Route::get('/login/facebook/facebook', 'SocialController@redirect')->name('login_facebook');
-Route::get('/callback/facebook', 'SocialController@callback');
+	//------------------------- Giao diện người dùng-------------------------------------
+	Route::get('/', 'BaseController@index')->name('index'); //Trang chủ
+	Route::get('login', 'BaseController@login')->name('login'); //Trang đăng nhập
+	Route::post('login', 'UserController@login_user')->name('login_user'); //Đăng nhập tài khoản user
+	Route::get('/register', 'BaseController@register')->name('register'); //Trang đăng ký
+	Route::post('/register', 'UserController@register_user')->name('register_user'); //Đăng ký tài khoản user
+	Route::get('/logout', 'UserController@logout_user')->name('logout_user'); //Đăng xuất tài khoản user
+	Route::get('/logout', 'UserController@logout_user')->name('logout_user'); //Đăng xuất tài khoản user
+	Route::get('/nap-the', 'BaseController@nap_the')->name('nap_the'); //Nạp thẻ cào
+	Route::get('/profile', 'BaseController@profile')->name('profile'); //Trang profile cá nhân
 
-Route::get('/nap-the', 'NapTheController@index')->name('nap_the'); // Nạp thẻ
-Route::post('/xac-nhan-nap-the', 'NapTheController@submitNapThe')->name('xac_nhan_nap_the'); // Xác nhận nạp thẻ
-Route::get('/nap-the-callback', 'NapTheController@callbackNapThe'); // Nạp thẻ
+	Route::get('/login/facebook/facebook', 'SocialController@redirect')->name('login_facebook');
+	Route::get('/callback/facebook', 'SocialController@callback');
 
-Route::get('/nap-tien-atm', 'NapTheController@nap_ATM')->name('nap_atm'); // Nạp ATM
+	Route::get('/nap-the', 'NapTheController@index')->name('nap_the'); // Nạp thẻ
+	Route::post('/xac-nhan-nap-the', 'NapTheController@submitNapThe')->name('xac_nhan_nap_the'); // Xác nhận nạp thẻ
+	Route::get('/nap-the-callback', 'NapTheController@callbackNapThe'); // Nạp thẻ
 
-//------------------DANH MỤC GAME: Ngọc Rồng----------------
-Route::get('/ngoc-rong/{param}', 'GameController@ngoc_rong')->name('ngoc_rong'); //show
-Route::get('/ngoc-rong/chi-tiet/{id}', 'GameController@chi_tiet_ngoc_rong')->name('chi_tiet_ngoc_rong'); //chi tiết ngọc rồng
-Route::post('/ngoc-rong/thanh-toan', 'GameController@thanh_toan_ngoc_rong')->name('pay_ngoc_rong'); //pay
+	Route::get('/nap-tien-atm', 'NapTheController@nap_ATM')->name('nap_atm'); // Nạp ATM
+
+	//------------------DANH MỤC GAME: Ngọc Rồng----------------
+	Route::get('/ngoc-rong/{param}', 'GameController@ngoc_rong')->name('ngoc_rong'); //show
+	Route::get('/ngoc-rong/chi-tiet/{id}', 'GameController@chi_tiet_ngoc_rong')->name('chi_tiet_ngoc_rong'); //chi tiết ngọc rồng
+	Route::post('/ngoc-rong/thanh-toan', 'GameController@thanh_toan_ngoc_rong')->name('pay_ngoc_rong'); //pay
 
 
-//------------------Dịch vụ game - Transaction----------------
-Route::group(['prefix' => 'dich-vu', 'as' => 'dichvu.'], function () { // dich vu
-	Route::group(['prefix' => 'ngoc-rong', 'as' => 'ngocrong.'], function () {
-		Route::get('/', 'BaseController@dich_vu_ngoc_rong')->name('index'); //Trang dich vụ ngọc rồng
-		Route::get('/ban-vang', 'ServiceController@ban_vang')->name('ban-vang'); //Trang dich vụ ngọc rồng bán vàng
-		Route::post('/ban-vang-pay', 'ServiceController@ban_vang_pay')->name('ban-vang-pay'); //Trang dich vụ ngọc rồng bán vàng
-		Route::get('/ban-ngoc', 'ServiceController@ban_ngoc')->name('ban-ngoc'); //bán ngoc
-		Route::post('/ban-ngoc-pay', 'ServiceController@ban_ngoc_pay')->name('ban-ngoc-pay'); //thanh toan
-		Route::get('/lam-nhiem-vu', 'ServiceController@nhiem_vu')->name('nhiem-vu'); //bán ngoc
-		Route::post('/lam-nhiem-vu-pay', 'ServiceController@nhiem_vu_pay')->name('nhiem-vu-pay'); //thanh toan
-		Route::get('/up-bi-kip', 'ServiceController@bi_kip')->name('bi-kip'); //bán ngoc
-		Route::post('/up-bi-kip-pay', 'ServiceController@bi_kip_pay')->name('bi-kip-pay'); //thanh toan
-		Route::get('/up-suc-manh-su-phu', 'ServiceController@su_phu')->name('su-phu'); //bán ngoc
-		Route::post('up-suc-manh-su-phu-pay', 'ServiceController@su_phu_pay')->name('su-phu-pay'); //thanh toan
-		Route::get('/up-suc-manh-de-tu', 'ServiceController@de_tu')->name('de-tu'); //bán ngoc
-		Route::post('up-suc-manh-de-tu-pay', 'ServiceController@de_tu_pay')->name('de-tu-pay'); //thanh toan
-		Route::get('/san-de-tu', 'ServiceController@san_de_tu')->name('san-de-tu'); //bán ngoc
-		Route::post('san-de-tu-pay', 'ServiceController@san_de_tu_pay')->name('san-de-tu-pay'); //thanh toan
+	//------------------Dịch vụ game - Transaction----------------
+	Route::group(['prefix' => 'dich-vu', 'as' => 'dichvu.'], function () { // dich vu
+		Route::group(['prefix' => 'ngoc-rong', 'as' => 'ngocrong.'], function () {
+			Route::get('/', 'BaseController@dich_vu_ngoc_rong')->name('index'); //Trang dich vụ ngọc rồng
+			Route::get('/ban-vang', 'ServiceController@ban_vang')->name('ban-vang'); //Trang dich vụ ngọc rồng bán vàng
+			Route::post('/ban-vang-pay', 'ServiceController@ban_vang_pay')->name('ban-vang-pay'); //Trang dich vụ ngọc rồng bán vàng
+			Route::get('/ban-ngoc', 'ServiceController@ban_ngoc')->name('ban-ngoc'); //bán ngoc
+			Route::post('/ban-ngoc-pay', 'ServiceController@ban_ngoc_pay')->name('ban-ngoc-pay'); //thanh toan
+			Route::get('/lam-nhiem-vu', 'ServiceController@nhiem_vu')->name('nhiem-vu'); //bán ngoc
+			Route::post('/lam-nhiem-vu-pay', 'ServiceController@nhiem_vu_pay')->name('nhiem-vu-pay'); //thanh toan
+			Route::get('/up-bi-kip', 'ServiceController@bi_kip')->name('bi-kip'); //bán ngoc
+			Route::post('/up-bi-kip-pay', 'ServiceController@bi_kip_pay')->name('bi-kip-pay'); //thanh toan
+			Route::get('/up-suc-manh-su-phu', 'ServiceController@su_phu')->name('su-phu'); //bán ngoc
+			Route::post('up-suc-manh-su-phu-pay', 'ServiceController@su_phu_pay')->name('su-phu-pay'); //thanh toan
+			Route::get('/up-suc-manh-de-tu', 'ServiceController@de_tu')->name('de-tu'); //bán ngoc
+			Route::post('up-suc-manh-de-tu-pay', 'ServiceController@de_tu_pay')->name('de-tu-pay'); //thanh toan
+			Route::get('/san-de-tu', 'ServiceController@san_de_tu')->name('san-de-tu'); //bán ngoc
+			Route::post('san-de-tu-pay', 'ServiceController@san_de_tu_pay')->name('san-de-tu-pay'); //thanh toan
+		});
+	});
+
+	// ------------------Giao dịch người dùng - Transaction----------------
+	Route::group(['prefix' => 'giao-dich', 'as' => 'giao-dich.'], function () {
+		Route::group(['prefix' => 'lich-su', 'as' => 'lich-su.'], function () {
+			Route::get('/', 'TransactionController@logTransaction')->name('index'); //Lịch sử giao dịch
+			Route::get('/search', 'TransactionController@logTransaction')->name('search'); //Search lịch sử giao dịch
+		});
+		Route::group(['prefix' => 'the-cao', 'as' => 'the-cao.'], function () {
+			Route::get('/', 'TransactionController@logCard')->name('index'); //Lịch sử giao dịch
+			Route::get('/search', 'TransactionController@logCard')->name('search'); //Search lịch sử giao dịch
+		});
+		Route::group(['prefix' => 'tai-khoan', 'as' => 'tai-khoan.'], function () {
+			Route::get('/', 'TransactionController@logAccout')->name('index'); //Lịch sử giao dịch
+			Route::get('/search', 'TransactionController@logAccout')->name('search'); //Search lịch sử giao dịch
+		});
+		Route::group(['prefix' => 'dich-vu', 'as' => 'dich-vu.'], function () {
+			Route::get('/', 'TransactionController@logService')->name('index'); //Lịch sử giao dịch
+			Route::get('/search', 'TransactionController@logService')->name('search'); //Search lịch sử giao dịch
+		});
+
+		Route::group(['prefix' => 'qua-tang', 'as' => 'qua-tang.'], function () {
+			Route::get('/', 'TransactionController@logGift')->name('index'); //Lịch sử giao dịch
+			Route::get('/search', 'TransactionController@logGift')->name('search'); //Search lịch sử giao dịch
+		});
+	});
+
+	// ------------------Vòng quay - Wheel----------------
+	Route::get('vong-quay', 'WheelController@index')->name('vong_quay'); //Vòng quay may mắn nick vip 50k
+	Route::post('load-vong-quay', 'WheelController@load')->name('load_vong_quay'); //Load vòng quay may mắn nick vip 50k
+	Route::post('mua-vong-quay', 'WheelController@buy')->name('buy_vong_quay'); //Mua vòng quay may mắn nick vip 50k
+
+	Route::get('vong-quay-vang-50k', 'WheelController@wheel50')->name('vong_quay_vang_50k'); //Vòng quay may mắn 50k
+	Route::post('load-vong-quay-50k', 'WheelController@load50')->name('load_vong_quay_50k'); //Load vòng quay may mắn 50k
+	Route::post('mua-vong-quay-vang-50k', 'WheelController@buy50')->name('buy_vong_quay_50k'); //Mua vòng quay may mắn 50k
+
+	Route::get('vong-quay-vang-20k', 'WheelController@wheel20')->name('vong_quay_vang_20k'); //Vòng quay may mắn 20k
+	Route::post('load-vong-quay-20k', 'WheelController@load20')->name('load_vong_quay_20k'); //Load vòng quay may mắn 20k
+	Route::post('mua-vong-quay-vang-20k', 'WheelController@buy20')->name('buy_vong_quay_20k'); //Mua vòng quay may mắn 20k
+
+	// ------------------Random ngọc rồng ----------------
+	Route::group(['prefix' => 'random-ngoc-rong', 'as' => 'random.'], function () {
+		Route::get('/{type}', 'RandomController@index')->name('index'); //Trang chủ random ngọc rồng
+		Route::post('buy-random', 'RandomController@saveRandom')->name('buy_acc'); //Mua random ngọc rồng
 	});
 });
-
-// ------------------Giao dịch người dùng - Transaction----------------
-Route::group(['prefix' => 'giao-dich', 'as' => 'giao-dich.'], function () {
-	Route::group(['prefix' => 'lich-su', 'as' => 'lich-su.'], function () {
-		Route::get('/', 'TransactionController@logTransaction')->name('index'); //Lịch sử giao dịch
-		Route::get('/search', 'TransactionController@logTransaction')->name('search'); //Search lịch sử giao dịch
-	});
-	Route::group(['prefix' => 'the-cao', 'as' => 'the-cao.'], function () {
-		Route::get('/', 'TransactionController@logCard')->name('index'); //Lịch sử giao dịch
-		Route::get('/search', 'TransactionController@logCard')->name('search'); //Search lịch sử giao dịch
-	});
-	Route::group(['prefix' => 'tai-khoan', 'as' => 'tai-khoan.'], function () {
-		Route::get('/', 'TransactionController@logAccout')->name('index'); //Lịch sử giao dịch
-		Route::get('/search', 'TransactionController@logAccout')->name('search'); //Search lịch sử giao dịch
-	});
-	Route::group(['prefix' => 'dich-vu', 'as' => 'dich-vu.'], function () {
-		Route::get('/', 'TransactionController@logService')->name('index'); //Lịch sử giao dịch
-		Route::get('/search', 'TransactionController@logService')->name('search'); //Search lịch sử giao dịch
-	});
-
-	Route::group(['prefix' => 'qua-tang', 'as' => 'qua-tang.'], function () {
-		Route::get('/', 'TransactionController@logGift')->name('index'); //Lịch sử giao dịch
-		Route::get('/search', 'TransactionController@logGift')->name('search'); //Search lịch sử giao dịch
-	});
-});
-
-// ------------------Vòng quay - Wheel----------------
-Route::get('vong-quay', 'WheelController@index')->name('vong_quay');//Vòng quay may mắn nick vip 50k
-Route::post('load-vong-quay', 'WheelController@load')->name('load_vong_quay');//Load vòng quay may mắn nick vip 50k
-Route::post('mua-vong-quay', 'WheelController@buy')->name('buy_vong_quay');//Mua vòng quay may mắn nick vip 50k
-
-Route::get('vong-quay-vang-50k', 'WheelController@wheel50')->name('vong_quay_vang_50k');//Vòng quay may mắn 50k
-Route::post('load-vong-quay-50k', 'WheelController@load50')->name('load_vong_quay_50k');//Load vòng quay may mắn 50k
-Route::post('mua-vong-quay-vang-50k', 'WheelController@buy50')->name('buy_vong_quay_50k');//Mua vòng quay may mắn 50k
-
-Route::get('vong-quay-vang-20k', 'WheelController@wheel20')->name('vong_quay_vang_20k');//Vòng quay may mắn 20k
-Route::post('load-vong-quay-20k', 'WheelController@load20')->name('load_vong_quay_20k');//Load vòng quay may mắn 20k
-Route::post('mua-vong-quay-vang-20k', 'WheelController@buy20')->name('buy_vong_quay_20k');//Mua vòng quay may mắn 20k
-
-// ------------------Random ngọc rồng ----------------
-Route::group(['prefix' => 'random-ngoc-rong', 'as' => 'random.'], function () {
-	Route::get('/{type}', 'RandomController@index')->name('index'); //Trang chủ random ngọc rồng
-	Route::post('buy-random', 'RandomController@saveRandom')->name('buy_acc'); //Mua random ngọc rồng
-});
-
 
 // ------------------Authentication-----------------------------
 Route::get('/admin', 'AdminController@login')->name('login_admin')->middleware('checkLogout');
 Route::post('/login-admin', 'AdminController@getLogin')->name('getLogin');
 Route::get('logout-admin', 'AdminController@Logout')->name('logout_admin');
-
 
 //-------------------Admin-----------------------------------------
 Route::group(['prefix' => 'quan-tri', 'as' => 'admin.', 'middleware' => ['checkLogin']], function () {

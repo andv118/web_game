@@ -98,8 +98,8 @@ $stt = $perPage * ($page - 1);
                                 <label for="pwd">Trạng thái:</label>
                                 <select name="status" class="form-control">
                                     <option value="">--Tất cả--</option>
-                                    <option value="0" <?php if (asset($dataBack['status']) && $dataBack['status'] == 0) echo "selected"; ?>>Chưa bán</option>
-                                    <option value="1" <?php if (asset($dataBack['status']) && $dataBack['status'] == 1) echo "selected"; ?>>Đã bán</option>
+                                    <option value="0" <?php if (isset($dataBack['status']) && $dataBack['status'] == 0) echo "selected"; ?>>Chưa bán</option>
+                                    <option value="1" <?php if (isset($dataBack['status']) && $dataBack['status'] == 1) echo "selected"; ?>>Đã bán</option>
                                 </select>
                             </div>
                         </div>
@@ -108,13 +108,7 @@ $stt = $perPage * ($page - 1);
                             <div class="row">
                                 <label>Loại:</label>
                                 <select name="type" class="form-control">
-                                    <option value="0" <?php if (asset($dataBack['type']) && $dataBack['type'] == 0) echo "selected"; ?>>Random Ngọc Rồng</option>
-                                    <option value="1" <?php if (asset($dataBack['type']) && $dataBack['type'] == 1) echo "selected"; ?>>Random PUBG</option>
-                                    <option value="2" <?php if (asset($dataBack['type']) && $dataBack['type'] == 2) echo "selected"; ?>>Random Liên Quân</option>
-                                    <option value="3" <?php if (asset($dataBack['type']) && $dataBack['type'] == 3) echo "selected"; ?>>Random Free Fire</option>
-                                    <option value="4" <?php if (asset($dataBack['type']) && $dataBack['type'] == 4) echo "selected"; ?>>Random Liên Minh</option>
-                                    <option value="5" <?php if (asset($dataBack['type']) && $dataBack['type'] == 5) echo "selected"; ?>>Random Mở Rương</option>
-                                    <option value="" <?php if (asset($dataBack['type']) && $dataBack['type'] == null) echo "selected"; ?>>--Tất cả--</option>
+                                    <option value="0">Random Ngọc Rồng</option>
                                 </select>
                             </div>
                         </div>

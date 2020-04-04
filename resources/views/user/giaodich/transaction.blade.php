@@ -35,7 +35,7 @@
                             <option value="">-- Tất cả --</option>
                             <option value="1" <?php if (isset($dataBack) && $dataBack['trade_type'] == 1) {
                                                     echo "selected";
-                                                } ?>>Rút tiền</option>
+                                                } ?>>Hoàn tiền</option>
                             <option value="2" <?php if (isset($dataBack) && $dataBack['trade_type'] == 2) {
                                                     echo "selected";
                                                 } ?>>Chuyển tiền</option>
@@ -57,6 +57,9 @@
                             <option value="8" <?php if (isset($dataBack) && $dataBack['trade_type'] == 8) {
                                                     echo "selected";
                                                 } ?>>Dịch vụ</option>
+                            <option value="9" <?php if (isset($dataBack) && $dataBack['trade_type'] == 9) {
+                                                    echo "selected";
+                                                } ?>>Mua lượt quay</option>
                         </select>
                     </div>
                 </div>
@@ -115,7 +118,7 @@
                 <tr>
                     <td style="display:none;">{{$v->date}}</td>
                     <td>{{$v->id}}</td>
-                    <td>{{$v->trade_name}}</td>
+                    <td>{{ $transaction->getTradeType($v->trade_type) }}</td>
                     <td>{{number_format($v->amount,0) . "đ"}}</td>
                     <td>{{number_format($v->last_amount,0) . "đ"}}</td>
                     <td>{{$v->content}}</td>
@@ -127,12 +130,7 @@
 
         <!-- BEGIN: PAGINATION -->
         <div class="data_paginate paging_bootstrap paginations_custom" style="text-align: center">
-            {{ $dataLog->appends([
-                'trade_type' => $dataBack['trade_type'],
-                'started_at' => $dataBack['started_at'],
-                'ended_at' => $dataBack['ended_at']
-                ])
-                ->links() }}
+            {{ $dataLog->appends(request()->query())->links() }}
         </div>
         <!-- END: PAGINATION -->
     </div>

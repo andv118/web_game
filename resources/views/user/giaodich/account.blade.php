@@ -78,7 +78,7 @@
                     <th>Danh mục</th>
                     <th>Mệnh giá</th>
                     <th>Chi tiết</th>
-                    <th>Kết quả</th>
+                    <th>Tài khoản|Mật khẩu</th>
                 </tr>
             </tbody>
             <tbody>

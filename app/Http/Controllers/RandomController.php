@@ -17,25 +17,29 @@ class RandomController extends Controller
 {
 
 	public function index($type, Request $req)
-	{
-
+	{	
 		$category = $type;
-
+		$typeGame = 0; // 0: ngoc rong
 		if ($category == 'all') {
-
 			$title = "THỬ VẬN MAY NGỌC RỒNG 20K";
-
-			$data = Random::where('type', 'Random Ngọc Rồng')->where('cost', 20000)->where('status', 0)->orderBy('add_time', 'desc')->paginate(20);
+			$data = Random::where('type', $typeGame)
+			->where('cost', 20000)
+			->where('status', 0)
+			->orderBy('date', 'desc')
+			->paginate(20);
 		} elseif ($category == 'tam-trung') {
 
 			$title = "THỬ VẬN MAY NGỌC RỒNG 50K";
 
-			$data = Random::where('type', 'Random Ngọc Rồng')->where('status', 0)->where('cost', 50000)->paginate(20);
+			$data = Random::where('type', $typeGame)
+			->where('status', 0)
+			->where('cost', 50000)
+			->paginate(20);
 		} else {
 
 			return redirect()->back();
 		}
-
+		// dd($data);
 		return view('user/random/index', compact('data', 'title'));
 	}
 
@@ -51,6 +55,7 @@ class RandomController extends Controller
 	public function saveRandom(Request $request)
 	{
 
+		$gameRandom = new GameRandom();
 		$id = $request->input('id');
 
 		// check so tien
@@ -72,7 +77,7 @@ class RandomController extends Controller
 		$log->user_id = Auth::user()->user_id;
 		$log->trade_type = "Mua tài khoản";
 		$log->amount = $data[0]['cost'];
-		$log->content = 'Mua tài khoản ' . $data[0]['type'] . ' #' . $id;
+		$log->content = 'Mua tài khoản ' . $gameRandom->getType($data[0]['type']) . ' #' . $id;
 		$log->last_amount = $cash;
 		$log->trade_type = 5;
 		$log->status = 1;
@@ -86,7 +91,7 @@ class RandomController extends Controller
 		$user->user_id = Auth::user()->user_id;
 		$user->type = $data[0]['category'];
 		$user->cost = $data[0]['cost'];
-		$user->desc = $data[0]['type'] . ' #' . $id;
+		$user->desc = $gameRandom->getType($data[0]['type']) . ' #' . $id;
 		$user->info = $data[0]['info'];
 		echo $log->id . '<br>';
 		$user->status = 1;
@@ -111,19 +116,23 @@ class RandomController extends Controller
 		$user_post = $request->input('user_post');
 		$status = $request->input('status');
 		$type = $request->input('type');
+		if($type == null) {
+			$type = 0; // random ngoc rong
+		}
+
 		$total = Random::count();
-
-		// dd($type);
-
-		$data = Random::leftJoin('users', 'users.user_id', '=', 'random.user_post_id')
+		$data = Random::query()
+			->leftJoin('users', 'users.user_id', '=', 'random.user_post_id')
 			->select('random.*', 'users.name')
 			->id($id)
+			->where('type', '=', $type)
 			->status($status)
 			->infor($infor)
 			->CTV($user_post)
-			->type($type)
 			->orderBy('id', 'desc')
 			->paginate($pagination);
+
+			// dd($data);
 
 		$dataBack = [
 			'id'        => $id,

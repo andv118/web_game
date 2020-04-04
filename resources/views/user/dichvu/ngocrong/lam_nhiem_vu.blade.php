@@ -10,7 +10,7 @@
 		});
 
 		// Tính toán số tiền phải trả
-		var arrPrice = ["250000", "150000", "100000", "100000", "200000", "400000"];
+		var arrPrice = ["200000", "150000", "100000", "100000", "200000", "400000"];
 		$('input[type="checkbox"]').change(function() {
 			updateMoney();
 		});
@@ -122,7 +122,7 @@
 							<div class="simple-checkbox s-filter">
 								<p>
 									<input value="0" type="checkbox" id="0">
-									<label for="0">Tiểu Đội Sát Thủ( yêu cầu : nm 300k ki. xd 300k hp chưa item. td 15k sd có item ) - 250,000 VNĐ</label>
+									<label for="0">Tiểu Đội Sát Thủ( yêu cầu : nm 300k ki. xd 300k hp chưa item. td 15k sd có item ) - 200,000 VNĐ</label>
 								</p>
 								<p>
 									<input value="1" type="checkbox" id="1">

@@ -31,7 +31,10 @@ class GameController extends Controller
     public function ngoc_rong($param, Request $request)
     {
         $pagination = 20;
-        $userCash = Auth::user()->cash;
+        $userCash = 0;
+        if (Auth::check()) {
+            $userCash = Auth::user()->cash;
+        }
         $ngocrong = new GameNgocRong();
         $keyword  = $request->input('keyword');
         $id       = $request->input('id');
@@ -42,6 +45,8 @@ class GameController extends Controller
         $server   = $request->input('servers');
         $dangky   = $request->input('dangky');
         $price    = $request->input('price');
+
+        $status = 0;
 
         $price1 = $this->progressPrice($price)['price1'];
         $price2 = $this->progressPrice($price)['price2'];
@@ -60,7 +65,7 @@ class GameController extends Controller
             ->note($keyword)
             ->id($id)
             ->price($price1, $price2)
-            ->status($status)
+            ->where('status', '=', $status)
             ->bongtai($bongtai)
             ->detu($detu)
             ->hanhtinh($hanhtinh)
@@ -177,9 +182,9 @@ class GameController extends Controller
             // ton tai user post id trong table users -> cong tien
             $cashUserPost = Users::query()->UserId($userPostId)->first();
             $lastCashUserPost = $cashUserPost->cash + $cost;
-            Users::query()
-                ->UserId($userPostId)
-                ->update(['cash' => $lastCashUserPost]);
+            // Users::query()
+            //     ->UserId($userPostId)
+            //     ->update(['cash' => $lastCashUserPost]);
         }
 
         // update status ngoc rong
@@ -278,6 +283,7 @@ class GameController extends Controller
             Ngocrong::where('id', $id)->delete();
             // delete image
             $gameNgocRong = new GameNgocRong();
+            $gameNgocRong->deleteThumb($id);
             $gameNgocRong->deleteImage($id);
             return redirect()->back()->with('message', 'Xóa thành công!');
         }
@@ -291,8 +297,6 @@ class GameController extends Controller
             $request,
             [
                 'cost' => 'required|integer|min:0|max:100000000',
-                'thumb' => 'max:512',
-                'imginfo' => 'max:2048',
             ],
 
             [
@@ -326,9 +330,9 @@ class GameController extends Controller
         $img = '';
 
         // check infor(acc) đã tồn tại
-        if (Ngocrong::where('info', '=', $infor)->count() > 0) {
-            return redirect()->back()->withErrors('Infor (Tài khoản) đã tồn tại!');
-        }
+        // if (Ngocrong::where('info', '=', $infor)->count() > 0) {
+        //     return redirect()->back()->withErrors('Infor (Tài khoản) đã tồn tại!');
+        // }
         // insert db
         $arrInsert = [
             'user_post_id' => $user_id,
@@ -419,7 +423,7 @@ class GameController extends Controller
         return redirect()->back()->with('message', 'Cập nhật tài khoản thành công!');
     }
 
-   
+
 
     /*********************** Game khac User ***************/
     public function tk_pubg()

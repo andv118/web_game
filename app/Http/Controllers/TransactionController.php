@@ -8,6 +8,8 @@ use App\Models\UsersBuy;
 use App\Models\UsersGift;
 use App\Models\UsersLog;
 use App\Models\UsersService;
+use App\Object\ObjectService;
+use App\Object\ObjectTransaction;
 use App\User;
 use Hash;
 use Auth;
@@ -37,10 +39,10 @@ class TransactionController extends Controller
             'ended_at'   => $ended_at,
         ];
 
+        $transaction = new ObjectTransaction();
+
         // Get dữ liệu lịch sử nạp thẻ
         $userLog = UsersLog::query()
-            ->join('transaction_trade_type', 'transaction_trade_type.trade_id', '=', 'users_log.trade_type')
-            ->select('users_log.*', 'transaction_trade_type.trade_name')
             ->user(Auth::user()['user_id'])
             ->trade($trade_type)
             ->time($started_at, $ended_at)
@@ -52,7 +54,8 @@ class TransactionController extends Controller
         // }
         return view('user/giaodich/transaction')->with([
             'dataLog' => $userLog,
-            'dataBack' => $dataBack
+            'dataBack' => $dataBack,
+            'transaction' => $transaction,
         ]);
     }
 
@@ -152,27 +155,28 @@ class TransactionController extends Controller
         $id         = $request->input('id');
         $started_at = $request->input('started_at');
         $ended_at   = $request->input('ended_at');
+
+        $service = new ObjectService();
+
+        // Get dữ liệu lịch sử dịch vụ
+        $userService = UsersService::query()
+            ->user(Auth::user()['user_id'])
+            ->id($id)
+            ->time($started_at, $ended_at)
+            ->orderBy('date', 'desc')
+            ->paginate($pagination);
+
         $dataBack = [
             'id'         => $id,
             'started_at' => $started_at,
             'ended_at'   => $ended_at,
         ];
 
-        // Get dữ liệu lịch sử dịch vụ
-        $userService = UsersService::query()
-            ->join('service_trade_type', 'service_trade_type.trade_id', '=', 'users_service.trade_type')
-            ->user(Auth::user()['user_id'])
-            // ->user('IAV8iYPX5K')
-            ->id($id)
-            ->time($started_at, $ended_at)
-            ->orderBy('date', 'desc')
-            ->paginate($pagination);
-        // dd($userService);
-
 
         return view('user/giaodich/service')->with([
             'dataLog'    => $userService,
-            'dataBack'   => $dataBack
+            'dataBack'   => $dataBack,
+            'service'    => $service,
         ]);
     }
 
@@ -211,5 +215,4 @@ class TransactionController extends Controller
             'dataBack'   => $dataBack
         ]);
     }
-
 }

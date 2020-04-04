@@ -85,14 +85,7 @@
                     <div class="c-product-header">
                         <div class="c-content-title-1">
                             @if($get->status == 0)
-                            <button type="button" class="btn c-btn btn-lg c-theme-btn c-font-uppercase c-font-bold c-btn-square m-t-20" data-toggle="modal" data-target="#modal_thanhtoan_ngocrong" 
-                            data-id="{{$get->id}}" 
-                            data-cost="{{$get->cost}}" 
-                            data-hanhtinh="{{ $ngocrong->strHanhTinh($get->hanhtinh) }}" 
-                            data-server="{{ $ngocrong->strServer($get->server) }}" 
-                            data-detu="{{ $ngocrong->strDeTu($get->detu) }}" 
-                            data-bongtai="{{ $ngocrong->strBongTai($get->bongtai) }}" 
-                            data-dangky="{{ $ngocrong->strDangKy($get->dk) }}">Mua ngay</button>
+                            <button type="button" class="btn c-btn btn-lg c-theme-btn c-font-uppercase c-font-bold c-btn-square m-t-20" data-toggle="modal" data-target="#modal_thanhtoan_ngocrong" data-id="{{$get->id}}" data-cost="{{$get->cost}}" data-hanhtinh="{{ $ngocrong->strHanhTinh($get->hanhtinh) }}" data-server="{{ $ngocrong->strServer($get->server) }}" data-detu="{{ $ngocrong->strDeTu($get->detu) }}" data-bongtai="{{ $ngocrong->strBongTai($get->bongtai) }}" data-dangky="{{ $ngocrong->strDangKy($get->dk) }}">Mua ngay</button>
                             <button type="button" class="btn c-btn btn-lg c-bg-green-4 c-font-white c-font-uppercase c-font-bold c-btn-square m-t-20" data-toggle="modal" data-target="#atm_modal">ATM - Ví điện tử</button>
                             @endif
                             <a class="btn c-btn btn-lg c-bg-green-4 c-font-white c-font-uppercase c-font-bold c-btn-square m-t-20" href="{{Route('nap_the')}}">Nạp thẻ cào</a>

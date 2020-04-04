@@ -146,7 +146,7 @@ class ServiceController extends Controller
         $item = $request->input('item');
         $price = preg_replace('/[^0-9]/', '', $price);
         $arrItem = [
-            "Tiểu Đội Sát Thủ - 250k",
+            "Tiểu Đội Sát Thủ - 200k",
             "Tiêu Diệt Fide - 150k",
             "Apk 19 20 - 100k",
             "Apk 13 14 15 - 100k",
@@ -215,16 +215,16 @@ class ServiceController extends Controller
         $item = $request->input('item');
         $price = preg_replace('/[^0-9]/', '', $price);
         $arrItem = [
-            "1000 bí kíp - 100k",
-            "2000 bí kíp - 200k",
-            "3000 bí kíp - 300k",
-            "4000 bí kíp - 400k",
-            "5000 bí kíp - 500k",
-            "6000 bí kíp - 600k",
-            "7000 bí kíp - 700k",
-            "8000 bí kíp - 800k",
-            "9000 bí kíp - 900k",
-            "10000 bí kíp - 1000k",
+            "1000 bí kíp - 50k",
+            "2000 bí kíp - 100k",
+            "3000 bí kíp - 150k",
+            "4000 bí kíp - 200k",
+            "5000 bí kíp - 250k",
+            "6000 bí kíp - 300k",
+            "7000 bí kíp - 350k",
+            "8000 bí kíp - 400k",
+            "9000 bí kíp - 450k",
+            "10000 bí kíp - 500k",
         ];
 
         $item = explode('|', $item);

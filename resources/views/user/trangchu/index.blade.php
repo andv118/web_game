@@ -40,7 +40,7 @@
 
 
                 <div class="item hover" style="padding-top: 10px;padding-bottom:10px;">
-                    <a href="{{Route('dichvu.ngocrong.index')}}" ><img src="public/client/assets//images/danhmuc.png" alt="Dịch vụ" style="width: 80%;">
+                    <a href="{{Route('dichvu.ngocrong.index')}}"><img src="public/client/assets//images/danhmuc.png" alt="Dịch vụ" style="width: 80%;">
                     </a>
                 </div>
 
@@ -50,7 +50,7 @@
                 </div>
 
                 <div class="item hover" style="padding-top: 10px;padding-bottom:10px;">
-                    <a href="#" data-toggle="modal" data-target="#atm_modal" ><img src="public/client/assets/images/napatm2.jpg" alt="Nạp Ví ATM"/ style="width: 80%;">
+                    <a href="#" data-toggle="modal" data-target="#atm_modal"><img src="public/client/assets/images/napatm2.jpg" alt="Nạp Ví ATM"/ style="width: 80%;">
                     </a>
                 </div>
 
@@ -73,95 +73,6 @@
                 <div class="c-line-center" style="width: 100px; height: 1px; margin: 20px auto; border-bottom: 4px solid #32c5d2;"></div>
             </div>
             <div class="row game-list">
-
-                  <div class="col-sm-3 col-xs-12 col-md-3" style="margin-bottom:10px;">
-                    <div class="classWithPad">
-                        <div class="news_image">
-                            <a href="{{Route('vong_quay_vang_20k')}}" class=""><img src="public/client/assets//images/quayvang20k.jpg"></a>
-                        </div>
-                        <div class="news_title"><a style="color: black!important;" href="{{Route('vong_quay_vang_20k')}}">VÒNG QUAY VÀNG 20K</a></div>
-                        <div class="news_description" style="font-size: 15px!important;">
-                            <p>
-                                Nick đã trúng: 32,324
-                            </p>
-                            <p>
-                                Người quay: 68,624
-                            </p>
-                        </div>
-                        <div class="a-more" style="margin-bottom: 20px;">
-                            <div class="row">
-
-                                <div class="col-xs-12">
-                                    <div class="view">
-                                        <a href="{{Route('vong_quay_vang_20k')}}">Xem tất cả</a>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                  
-                  
-                 <div class="col-sm-3 col-xs-12 col-md-3" style="margin-bottom:10px;">
-                    <div class="classWithPad">
-                        <div class="news_image">
-                            <a href="{{Route('vong_quay_vang_50k')}}" class=""><img src="public/client/assets//images/quayvang50k.jpg"></a>
-                        </div>
-                        <div class="news_title"><a style="color: black!important;" href="{{Route('vong_quay_vang_50k')}}">VÒNG QUAY VÀNG 50K</a></div>
-                        <div class="news_description" style="font-size: 15px!important;">
-                            <p>
-                                Nick đã trúng: 12,753
-                            </p>
-                            <p>
-                                Người quay: 49,053
-                            </p>
-                        </div>
-                        <div class="a-more" style="margin-bottom: 20px;">
-                            <div class="row">
-
-                                <div class="col-xs-12">
-                                    <div class="view">
-                                        <a href="{{Route('vong_quay_vang_50k')}}">Xem tất cả</a>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                 
-                 <div class="col-sm-3 col-xs-12 col-md-3" style="margin-bottom:10px;">
-                    <div class="classWithPad">
-                        <div class="news_image">
-                            <a href="{{Route('vong_quay')}}" class=""><img src="public/client/assets//images/vongquay50k.jpg"></a>
-                        </div>
-                        <div class="news_title"><a style="color: black!important;" href="{{Route('vong_quay')}}">VÒNG QUAY NICK VIP 50K</a></div>
-                        <div class="news_description" style="font-size: 15px!important;">
-                            <p>
-                                Nick đã trúng: 64,130
-                            </p>
-                            <p>
-                                Người quay: 67,122
-                            </p>
-                        </div>
-                        <div class="a-more" style="margin-bottom: 20px;">
-                            <div class="row">
-
-                                <div class="col-xs-12">
-                                    <div class="view">
-                                        <a href="{{Route('vong_quay')}}">Xem tất cả</a>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-          
-
 
                 <div class="col-sm-3 col-xs-12 col-md-3" style="margin-bottom:10px;">
                     <div class="classWithPad">
@@ -191,7 +102,91 @@
                     </div>
                 </div>
 
-           </div>
+                <div class="col-sm-3 col-xs-12 col-md-3" style="margin-bottom:10px;">
+                    <div class="classWithPad">
+                        <div class="news_image">
+                            <a href="{{Route('vong_quay_vang_50k')}}" class=""><img src="public/client/assets//images/quayvang50k.jpg"></a>
+                        </div>
+                        <div class="news_title"><a style="color: black!important;" href="{{Route('vong_quay_vang_50k')}}">VÒNG QUAY VÀNG 50K</a></div>
+                        <div class="news_description" style="font-size: 15px!important;">
+                            <p>
+                                Nick đã trúng: 12,753
+                            </p>
+                            <p>
+                                Người quay: 49,053
+                            </p>
+                        </div>
+                        <div class="a-more" style="margin-bottom: 20px;">
+                            <div class="row">
+
+                                <div class="col-xs-12">
+                                    <div class="view">
+                                        <a href="{{Route('vong_quay_vang_50k')}}">Xem tất cả</a>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-3 col-xs-12 col-md-3" style="margin-bottom:10px;">
+                    <div class="classWithPad">
+                        <div class="news_image">
+                            <a href="{{Route('vong_quay')}}" class=""><img src="public/client/assets//images/vongquay50k.jpg"></a>
+                        </div>
+                        <div class="news_title"><a style="color: black!important;" href="{{Route('vong_quay')}}">VÒNG QUAY NICK VIP 50K</a></div>
+                        <div class="news_description" style="font-size: 15px!important;">
+                            <p>
+                                Nick đã trúng: 64,130
+                            </p>
+                            <p>
+                                Người quay: 67,122
+                            </p>
+                        </div>
+                        <div class="a-more" style="margin-bottom: 20px;">
+                            <div class="row">
+
+                                <div class="col-xs-12">
+                                    <div class="view">
+                                        <a href="{{Route('vong_quay')}}">Xem tất cả</a>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-3 col-xs-12 col-md-3" style="margin-bottom:10px;">
+                    <div class="classWithPad">
+                        <div class="news_image">
+                            <a href="{{Route('vong_quay_vang_20k')}}" class=""><img src="public/client/assets//images/quayvang20k.jpg"></a>
+                        </div>
+                        <div class="news_title"><a style="color: black!important;" href="{{Route('vong_quay_vang_20k')}}">VÒNG QUAY VÀNG 20K</a></div>
+                        <div class="news_description" style="font-size: 15px!important;">
+                            <p>
+                                Nick đã trúng: 32,324
+                            </p>
+                            <p>
+                                Người quay: 68,624
+                            </p>
+                        </div>
+                        <div class="a-more" style="margin-bottom: 20px;">
+                            <div class="row">
+
+                                <div class="col-xs-12">
+                                    <div class="view">
+                                        <a href="{{Route('vong_quay_vang_20k')}}">Xem tất cả</a>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
             <!-- End-->
         </div>
         <!-- End-->
@@ -209,7 +204,7 @@
                 <h3 class="c-center c-font-uppercase c-font-bold">Danh mục dịch vụ</h3>
                 <div class="c-line-center" style="width: 100px; height: 1px; margin: 20px auto; border-bottom: 4px solid #32c5d2;"></div>
             </div>
-            <div class="row row-flex-safari game-list" >
+            <div class="row row-flex-safari game-list">
 
                 <div class="col-sm-4 col-xs-6 p-5">
                     <div class="classWithPad" style="width: 90%;">
@@ -255,7 +250,7 @@
                 <h3 class="c-center c-font-uppercase c-font-bold">Danh mục game random</h3>
                 <div class="c-line-center" style="width: 100px; height: 1px; margin: 20px auto; border-bottom: 4px solid #32c5d2;"></div>
             </div>
-            <div class="row  game-list" >
+            <div class="row  game-list">
 
                 <div class="col-sm-3 col-xs-6 p-5">
                     <div class="classWithPad" style="margin-right: 10px;">

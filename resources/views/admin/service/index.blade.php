@@ -166,12 +166,12 @@
                                         <td style="text-align: center;">{{$item->date}}</td>
                                         <td style="text-align: center;"><a href="{{Route('admin.manage-users').'?keyword='.$item->name}}">{{$item->name}}</a></td>
                                         <td style="text-align: center;">{{$item->id}}</td>
-                                        <td style="text-align: center;">{{$item->trade_name}}</td>
+                                        <td style="text-align: center;">{{ $service->getTradeType($item->trade_type) }}</td>
                                         <td style="text-align: center;">{{number_format($item->total_price) . "đ"}}</td>
                                         <td style="text-align: left;"><span class="btn btn-block btn-outline-{{$label}} btn-sm">{{$item->desc_status}}</span></td>
                                         <td style="text-align: center;">{{$item->description}}</td>
                                         <td style="text-align: center;">
-                                            <button data-status="{{$item->status}}" data-content="{{$item->description}}" data-id="{{$item->id}}" data-acc="{{$item->customer_acc}}" data-pass="{{$item->customer_pass}}" data-action="{{$item->customer_action}}" type="button" class="btn btn-block btn-info" data-toggle="modal" data-target="#edit_modal">Thao tác</button>
+                                            <button data-status="{{$item->status}}" data-content="{{$item->description}}" data-id="{{$item->id}}" data-acc="{{$item->customer_acc}}" data-pass="{{$item->customer_pass}}" data-action="{{$item->customer_action}}" data-price="{{$item->total_price}}" type="button" class="btn btn-block btn-info" data-toggle="modal" data-target="#edit_modal">Thao tác</button>
                                         </td>
                                         <td style="text-align:center;"><a title="Xóa" href="{{Route('admin.giao-dich.delete_service',$item->id)}}" class="btn btn-danger" onclick="return confirm('Bạn chắc chắn muốn xóa #-{{$item->id}} ?')"><i class="fas fa-times-circle"></i> Xóa</a></td>
                                     </tr>
@@ -233,6 +233,7 @@
                 <form id="action_service" action="{{Route('admin.giao-dich.action_service')}}" class="form-horizontal" method="POST">
                     {{ csrf_field() }}
                     <input id="inp_id" class="form-control c-square c-theme" type="hidden" name="id" value="">
+                    <input id="inp_price" class="form-control c-square c-theme" type="hidden" name="price" value="">
 
                     <div class="row">
                         <label class="col-md-3 control-label"><b>Nội dung:</b></label>
@@ -280,6 +281,7 @@
             var status = button.data('status')
             var descstatus = button.data('descstatus')
             var content = button.data('content')
+            var price = button.data('price')
             // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
             // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
             var modal = $(this)
@@ -289,6 +291,7 @@
 
             modal.find('#inp_noidung').val(content)
             modal.find('#inp_id').val(id)
+            modal.find('#inp_price').val(price)
             $('#select_trangthai').find('option').each(function(i, e) {
                 if ($(e).val() == status) {
                     $('#select_trangthai').prop('selectedIndex', i);

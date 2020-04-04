@@ -70,7 +70,6 @@ class AdminController extends Controller
         $data = [];
 
         $request = $req->post();
-
         foreach ($request as $key => $value) {
 
             if ($key != '_token') {

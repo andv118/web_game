@@ -65,7 +65,7 @@
                                     <option value="">-- Tất cả --</option>
                                     <option value="1" <?php if (isset($dataBack) && $dataBack['transaction'] == 1) {
                                                             echo "selected";
-                                                        } ?>>Rút tiền</option>
+                                                        } ?>>Hoàn tiền</option>
                                     <option value="2" <?php if (isset($dataBack) && $dataBack['transaction'] == 2) {
                                                             echo "selected";
                                                         } ?>>Chuyển tiền</option>
@@ -153,7 +153,7 @@
                                         <td style="text-align: center;">{{$item->date}}</td>
                                         <td style="text-align: center;"><a href="{{Route('admin.manage-users').'?keyword='.$item->name}}">{{$item->name}}</a></td>
                                         <td style="text-align: center;">{{$item->id}}</td>
-                                        <td style="text-align: left;">{{$item->trade_name}}</td>
+                                        <td style="text-align: left;">{{ $transaction->getTradeType($item->trade_type) }}</td>
                                         <td style="text-align: center;">{{number_format($item->amount) . "đ"}}</td>
                                         <td style="text-align: center;">{{number_format($item->last_amount) . "đ"}}</td>
                                         <td style="text-align: left;">{{$item->content}}</td>

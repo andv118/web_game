@@ -186,7 +186,7 @@ class GameNgocRong
             $last = array_pop($arr);
             return url('/') . "/" . $this->url . $last;
         }
-        return url('/') . "/" . $this->url . "no-thumbnail.jpg";
+        return url('/') . "/" . "public/client/assets/images/" . "no-thumbnail.jpg";
     }
 
     /**
@@ -218,20 +218,29 @@ class GameNgocRong
      */
     function deleteImage($id)
     {
-        // delete thumb
-        $thumbs = $this->url . 'thumb-' . $id . '-' . $this->game . '*';
-        $thumbs = glob($thumbs);
-        if (sizeof($thumbs) > 0) {
-            foreach ($thumbs as $thumb) {
-                unlink($thumb);
-            }
-        }
         // delete image
         $images = $this->url . 'image-' . $id . '-' . $this->game . '*';
         $images = glob($images);
         if (sizeof($images) > 0) {
             foreach ($images as $img) {
                 unlink($img);
+            }
+        }
+    }
+
+    /**
+     * Xóa ảnh đại diện (khi xóa acc)
+     * @param int
+     * 
+     */
+    function deleteThumb($id)
+    {
+        // delete thumb
+        $thumbs = $this->url . 'thumb-' . $id . '-' . $this->game . '*';
+        $thumbs = glob($thumbs);
+        if (sizeof($thumbs) > 0) {
+            foreach ($thumbs as $thumb) {
+                unlink($thumb);
             }
         }
     }

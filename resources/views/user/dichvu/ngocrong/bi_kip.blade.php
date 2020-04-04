@@ -10,7 +10,7 @@
 		});
 
 		// Tính toán số tiền phải trả
-		var arrPrice = ["100000", "200000", "300000", "400000", "500000", "600000", "700000", "800000", "900000", "1000000"];
+		var arrPrice = ["50000", "100000", "150000", "200000", "250000", "300000", "350000", "400000", "450000", "500000"];
 		$('input[type="checkbox"]').change(function() {
 			updateMoney();
 		});
@@ -122,43 +122,43 @@
 							<div class="simple-checkbox s-filter">
 								<p>
 									<input value="0" type="checkbox" id="0">
-									<label for="0">1000 bí kíp - 100,000 VNĐ</label>
+									<label for="0">1000 bí kíp - 50,000 VNĐ</label>
 								</p>
 								<p>
 									<input value="1" type="checkbox" id="1">
-									<label for="1">2000 bí kíp - 200,000 VNĐ</label>
+									<label for="1">2000 bí kíp - 100,000 VNĐ</label>
 								</p>
 								<p>
 									<input value="2" type="checkbox" id="2">
-									<label for="2">3000 bí kíp - 300,000 VNĐ</label>
+									<label for="2">3000 bí kíp - 150,000 VNĐ</label>
 								</p>
 								<p>
 									<input value="3" type="checkbox" id="3">
-									<label for="3">4000 bí kíp - 400,000 VNĐ</label>
+									<label for="3">4000 bí kíp - 200,000 VNĐ</label>
 								</p>
 								<p>
 									<input value="4" type="checkbox" id="4">
-									<label for="4">5000 bí kíp - 500,000 VNĐ</label>
+									<label for="4">5000 bí kíp - 250,000 VNĐ</label>
 								</p>
 								<p>
 									<input value="5" type="checkbox" id="5">
-									<label for="5">6000 bí kíp - 600,000 VNĐ</label>
+									<label for="5">6000 bí kíp - 300,000 VNĐ</label>
 								</p>
 								<p>
 									<input value="6" type="checkbox" id="6">
-									<label for="6">7000 bí kíp - 700,000 VNĐ</label>
+									<label for="6">7000 bí kíp - 350,000 VNĐ</label>
 								</p>
 								<p>
 									<input value="7" type="checkbox" id="7">
-									<label for="7">8000 bí kíp - 800,000 VNĐ</label>
+									<label for="7">8000 bí kíp - 400,000 VNĐ</label>
 								</p>
 								<p>
 									<input value="8" type="checkbox" id="8">
-									<label for="8">9000 bí kíp - 900,000 VNĐ</label>
+									<label for="8">9000 bí kíp - 450,000 VNĐ</label>
 								</p>
 								<p>
 									<input value="9" type="checkbox" id="9">
-									<label for="9">10000 bí kíp - 1000,000 VNĐ</label>
+									<label for="9">10000 bí kíp - 500,000 VNĐ</label>
 								</p>
 							</div>
 
