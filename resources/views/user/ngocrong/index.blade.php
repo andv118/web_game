@@ -189,14 +189,6 @@
             </a>
         </strong>
     </div>
-    @elseif(old('id') != null && isset($data[0]->active) && $data[0]->active == 0)
-    <div class="alert alert-info">
-        <strong>
-            <a href="{{Route('ngoc_rong','all')}}">
-                <p class="text-center text-muted">MÃ SỐ NICK NÀY CÓ NGƯỜI ĐÃ MUA TRƯỚC ĐÓ HOẶC ĐANG ĐẶT CỌC BẠN VUI LÒNG CHỌN NICK KHÁC CẢM ƠN !</p>
-            </a>
-        </strong>
-    </div>
     @else
     <div class="row row-flex  item-list">
         @foreach($data as $value)

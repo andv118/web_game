@@ -173,5 +173,7 @@ Route::group(['prefix' => 'quan-tri', 'as' => 'admin.', 'middleware' => ['checkL
 		Route::post('xoa-all-lich-su-mua', 'ChargeController@delete_all_buy')->name('delete_all_buy');
 
 		Route::get('lich-su-quay', 'ChargeController@history_whell')->name('history_whell');
+		Route::post('xoa-all-lich-su-quay', 'ChargeController@delete_all_wheel')->name('delete_all_wheel');
+
 	});
 });

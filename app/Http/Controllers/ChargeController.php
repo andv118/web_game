@@ -4,24 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Users;
-use App\Models\Settings;
-use App\Models\Slides;
-use App\Models\Danhmuc;
-use App\Models\Ngocrong;
-use App\Models\Pubg;
-use App\Models\Freefire;
-use App\Models\Lienquan;
-use App\Models\Random;
 use App\Models\NapCham;
 use App\Models\UsersBuy;
 use App\Models\UsersLog;
 use App\Models\UsersService;
-use App\Models\wheel;
+use App\Models\Wheel;
 use App\Object\ObjectService;
 use App\Object\ObjectTransaction;
 use App\Object\ObjectVongQuay;
-use Hash;
-use Session;
 use Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -387,5 +377,14 @@ class ChargeController extends Controller
             ->orderBy('date', 'desc')->paginate(20);
 
         return view('admin/vongquay/index', compact('data', 'total', 'wheel'));
+    }
+
+    /**
+     * Xóa toàn bộ quay
+     */
+    public function delete_all_wheel()
+    {
+        Wheel::query()->truncate();
+        return redirect()->route('admin.giao-dich.history_whell')->with('message', 'Xóa lịch sử thành công');
     }
 }

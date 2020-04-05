@@ -7,6 +7,7 @@ use App\Models\Users;
 use App\Models\Ngocrong;
 use App\Models\NapCham;
 use App\Models\Random;
+use App\Models\UsersBuy;
 use App\Models\UsersService;
 use App\Models\Wheel;
 use Carbon\Carbon;
@@ -26,7 +27,10 @@ class HomeController extends Controller
         // tong so du
         $amounts = Users::where('is_admin', 0)->sum('cash');
         $amountsPerformance = Users::where('date', '<', $firstDayOfMonth)->where('is_admin', 0)->sum('cash');
-        $amountsPercent = (($amounts - $amountsPerformance) / $amountsPerformance) * 100;
+        $amountsPercent = 0;
+        if((int) $amountsPerformance != 0) {
+            $amountsPercent = (($amounts - $amountsPerformance) / $amountsPerformance) * 100;
+        }
 
         // the cao
         $cards = NapCham::where('status', 1)->count();
@@ -89,9 +93,16 @@ class HomeController extends Controller
      * @return int
      */
     public function getDoanhThu($year, $mon, $day)
-    {
-        $doanhthu = $this->doanhThuNgocRong($year, $mon, $day) + $this->doanhThuRandom($year, $mon, $day) + $this->doanhThuServie($year, $mon, $day);
+    {   
+        $game_type = 3; // ngoc rong + random ngoc rong
+        $amountNgocRong = UsersBuy::where('game_type', $game_type)
+            ->year($year)
+            ->month($mon)
+            ->day($day)
+            ->sum('cost');
+        $doanhthu = $amountNgocRong + $this->doanhThuServie($year, $mon, $day);
         return $doanhthu;
+        
         // $amountNgocRong = Ngocrong::where('status', 1)
         //     ->year($year)
         //     ->month($mon)

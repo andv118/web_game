@@ -519,18 +519,89 @@
                 <div class="box box-danger collapsed-box box-solid" style="padding: 0;">
                     <div class="box-header with-border">
                         <h3 class="box-title">LỊCH SỬ GIAO DỊCH</h3>
-                        <!-- /.box-tools -->
                     </div>
                     <!-- /.box-header -->
                     <div class="box-body" style="color: #505050;padding:20px;min-height: 480px;line-height: 1.8;font-size: 15px;">
                         <marquee style="color:#000;min-height: 433px;max-height: 433px;" direction="up" scrollamount="2">
-                            @foreach($giaodich as $item)
+
+                            <p key="1">
+                                <img class="img-top" alt="" src="public/client/assets/images/default.jpg">
+                                <span class="label label-danger">Tuấn Láo</span>
+                                <span>Mua Thành Công Nick Ngọc Rồng <?php echo number_format(500000); ?>đ</span>
+                            </p>
+                            <p key="1">
+                                <img class="img-top" alt="" src="public/client/assets/images/default.jpg">
+                                <span class="label label-danger">Hoàng Gaming</span>
+                                <span>Mua Thành Công Nick Ngọc Rồng <?php echo number_format(1000000); ?>đ</span>
+                            </p>
+                            <p key="1">
+                                <img class="img-top" alt="" src="public/client/assets/images/default.jpg">
+                                <span class="label label-danger">Phước MT</span>
+                                <span>Mua Thành Công Nick Ngọc Rồng <?php echo number_format(2000000); ?>đ</span>
+                            </p>
+                            <p key="1">
+                                <img class="img-top" alt="" src="public/client/assets/images/default.jpg">
+                                <span class="label label-danger">Hữu Tài</span>
+                                <span>Mua Thành Công Nick Ngọc Rồng <?php echo number_format(200000); ?>đ</span>
+                            </p>
+                            <p key="1">
+                                <img class="img-top" alt="" src="public/client/assets/images/default.jpg">
+                                <span class="label label-danger">Nguyen Kiet</span>
+                                <span>Mua Thành Công Nick Ngọc Rồng <?php echo number_format(200000); ?>đ</span>
+                            </p>
+                            <p key="1">
+                                <img class="img-top" alt="" src="public/client/assets/images/default.jpg">
+                                <span class="label label-danger">TCường-g Còii-i</span>
+                                <span>Mua Thành Công Nick Ngọc Rồng <?php echo number_format(5000000); ?>đ</span>
+                            </p>
+                            <p key="1">
+                                <img class="img-top" alt="" src="public/client/assets/images/default.jpg">
+                                <span class="label label-danger">Bi0510</span>
+                                <span>Mua Thành Công Nick Ngọc Rồng <?php echo number_format(100000); ?>đ</span>
+                            </p>
+                            <p key="1">
+                                <img class="img-top" alt="" src="public/client/assets/images/default.jpg">
+                                <span class="label label-danger">Khang Bui</span>
+                                <span>Mua Thành Công Nick Ngọc Rồng <?php echo number_format(500000); ?>đ</span>
+                            </p>
+                            <p key="1">
+                                <img class="img-top" alt="" src="public/client/assets/images/default.jpg">
+                                <span class="label label-danger">Hieulol1ts</span>
+                                <span>Mua Thành Công Nick Ngọc Rồng <?php echo number_format(1500000); ?>đ</span>
+                            </p>
+                            <p key="1">
+                                <img class="img-top" alt="" src="public/client/assets/images/default.jpg">
+                                <span class="label label-danger">Sarahedzo01</span>
+                                <span>Mua Thành Công Nick Ngọc Rồng <?php echo number_format(250000); ?>đ</span>
+                            </p>
+                            <p key="1">
+                                <img class="img-top" alt="" src="public/client/assets/images/default.jpg">
+                                <span class="label label-danger">Huydương Gl</span>
+                                <span>Mua Thành Công Nick Ngọc Rồng <?php echo number_format(150000); ?>đ</span>
+                            </p>
+                            <p key="1">
+                                <img class="img-top" alt="" src="public/client/assets/images/default.jpg">
+                                <span class="label label-danger">quanhoang9087</span>
+                                <span>Mua Thành Công Nick Ngọc Rồng <?php echo number_format(500000); ?>đ</span>
+                            </p>
+                            <p key="1">
+                                <img class="img-top" alt="" src="public/client/assets/images/default.jpg">
+                                <span class="label label-danger">Trai Họ Lý</span>
+                                <span>Mua Thành Công Nick Ngọc Rồng <?php echo number_format(2500000); ?>đ</span>
+                            </p>
+                            <p key="1">
+                                <img class="img-top" alt="" src="public/client/assets/images/default.jpg">
+                                <span class="label label-danger">Ngân Kim</span>
+                                <span>Mua Thành Công Nick Ngọc Rồng <?php echo number_format(500000); ?>đ</span>
+                            </p>
+
+                            <!-- @foreach($giaodich as $item)
                             <p key="1">
                                 <img class="img-top" alt="" src="<?php if (is_numeric($item['user_id'])) : ?>https://graph.facebook.com/v3.0/<?php echo $item['user_id']; ?>/picture?width=400&height=400<?php else : ?>public/client/assets/images/default.jpg<?php endif; ?>">
                                 <span class="label label-danger"><?php echo $item['user_name']; ?></span>
                                 <span>đã <?php echo $item['content']; ?> với giá <?php echo number_format($item['amount']); ?>đ</span>
                             </p>
-                            @endforeach
+                            @endforeach -->
 
                         </marquee>
                     </div>
