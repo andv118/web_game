@@ -24,7 +24,7 @@
                         <div class="col-lg-6 col-md-12 col-sm-12">
                             <div class="input-group m-b-10 c-square">
                                 <span class="input-group-addon"><b>Giá:</b></span>
-                                <input class="form-control c-square c-theme" type="number" name="cost" placeholder="Nhập giá bán" required="" value="">
+                                <input class="form-control c-square c-theme price" type="text" name="cost" placeholder="Nhập giá bán" required="" value="">
                             </div>
                         </div>
 
@@ -38,7 +38,7 @@
                                 <span class="input-group-addon"><b>Đăng ký:</b></span>
                                 <select class="form-control c-square c-theme" name="dangky" required>
                                     <option value="">Chọn loại đăng ký</option>
-                                    <option value="1" selected >Ảo</option>
+                                    <option value="1" selected>Ảo</option>
                                     <option value="2">Gmail Full</option>
                                 </select>
                             </div>
@@ -198,7 +198,7 @@
                         <div class="col-lg-6 col-md-12 col-sm-12">
                             <div class="input-group m-b-10 c-square">
                                 <span class="input-group-addon"><b>Giá:</b></span>
-                                <input class="form-control c-square c-theme" type="number" name="cost" placeholder="Nhập giá bán" required="" value="">
+                                <input class="form-control c-square c-theme" type="text" name="cost" placeholder="Nhập giá bán" required="" value="">
                             </div>
                         </div>
 
@@ -325,4 +325,4 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
-<!-- END: UPDATE MODAL BOX -->X
+<!-- END: UPDATE MODAL BOX -->

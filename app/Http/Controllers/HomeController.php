@@ -11,6 +11,7 @@ use App\Models\UsersBuy;
 use App\Models\UsersService;
 use App\Models\Wheel;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -293,13 +294,13 @@ class HomeController extends Controller
     }
 
     public function DeleteUsers($id)
-    {
+    {   
         $data = Users::where('id', $id)->get();
-        if (count($data) > 0) {
+        if($id != Auth::user()->id && count($data) > 0) {
             Users::where('id', $id)->delete();
             return redirect()->back()->with('message', 'Xóa thành công');
         }
-        return redirect()->back();
+        return redirect()->back()->withErrors('Không được xóa tài khoản đăng đăng nhập!');
     }
 
     public function UpdateUsers($id)

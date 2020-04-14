@@ -154,7 +154,7 @@ $stt = $perPage * ($page - 1);
                             {{$data->appends(request()->query())->links()}}
                         </div>
                     </div>
-                     <!-- END: data -->
+                    <!-- END: data -->
                 </div>
             </div>
         </div>
@@ -176,13 +176,14 @@ $stt = $perPage * ($page - 1);
 
 <script>
     $(document).ready(function() {
+
         $('#update_ngocrong').on('click', function(event) {
             $('#modal_update_ngocrong').on('show.bs.modal', function(event) {
                 var button = $(event.relatedTarget) // Button that triggered the modal
                 // console.log(123);
 
                 var id = button.data('id')
-                var infor = button.data('infor') 
+                var infor = button.data('infor')
                 var cost = button.data('cost')
                 var dangky = button.data('dangky')
                 var server = button.data('server')
@@ -192,6 +193,8 @@ $stt = $perPage * ($page - 1);
                 var note = button.data('note')
                 var active = button.data('active')
                 var stick = button.data('stick')
+
+                cost = addCommas(cost)
 
                 // console.log(stick)
 
@@ -218,6 +221,26 @@ $stt = $perPage * ($page - 1);
                     $(select).prop('selectedIndex', i);
                 }
             });
+        }
+
+        $('button[type="submit"]').click(function() {
+            var price = $('input[name="cost"]').val();
+            price = parseInt(price.replace(/,/g, ''));
+            $('input[name="cost"]').val(price);
+        });
+
+        $('input[name="cost"]').keyup(function() {
+            var price = $(this).val();
+            price = parseInt(price.replace(/,/g, ''));
+            price = addCommas(price);
+            $(this).val(price)
+            // console.log(price);
+        });
+
+        function addCommas(x) {
+            var parts = x.toString().split(".");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join(".");
         }
     });
 </script>

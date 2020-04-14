@@ -37,7 +37,7 @@
                         @elseif($errors->any())
                         <div class="alert alert-danger alert-block">
                             <button type="button" class="close" data-dismiss="alert">×</button>
-                            {{ $errors->first('cash') }}
+                            {{ $errors->first() }}
                         </div>
                         @endif
 
