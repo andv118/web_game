@@ -231,8 +231,10 @@ $stt = $perPage * ($page - 1);
 
         $('input[name="cost"]').keyup(function() {
             var price = $(this).val();
-            price = parseInt(price.replace(/,/g, ''));
-            price = addCommas(price);
+            if(price.trim()) {
+                price = parseInt(price.replace(/,/g, ''));
+                price = addCommas(price);
+            }
             $(this).val(price)
             // console.log(price);
         });
