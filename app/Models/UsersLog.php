@@ -11,6 +11,8 @@ class UsersLog extends Model
 
     public $timestamps = false;
 
+    protected $fillable = ['id', 'user_id', 'trade_type', 'content', 'serial', 'amount', 'last_amount', 'status', 'date', 'add_time', 'domain', 'action_id'];
+
     /**
      * Scope kiểu giao dịch
      * @param query, int

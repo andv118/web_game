@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 
 class NapCham extends Model
 {
@@ -11,6 +10,7 @@ class NapCham extends Model
 
     public $timestamps = false;
 
+    protected $fillable = ['id', 'user_id', 'serial', 'pin', 'tel', 'desc', 'amount', 'fee', 'status', 'type', 'date', 'add_time', 'trans_id', 'domain'];
 
     /**
      * Scope chọn user
@@ -134,37 +134,5 @@ class NapCham extends Model
         }
         return $query;
     }
-
-
-    /**
-     * Lấy thẻ đã tồn tại ttrong db
-     * @return int size;
-     */
-    public function getCardExist($code, $serial)
-    {
-        $sizeCard = NapCham::select(DB::raw('count(*) as count'))
-            ->where([
-                ['pin', '=', $code],
-                ['serial', '=', $serial]
-            ])
-            ->limit(1)
-            ->get();
-        return $sizeCard;
-    }
-
-    /**
-     * GET data log nap the theo user_id
-     * @return array logData;
-     */
-    public function getLogNapThe($userId)
-    {
-        $panigate = 10;
-        $logData = NapCham::select('id', 'serial', 'pin', 'amount', 'tel', 'desc', 'date')
-            ->where([
-                ['user_id', '=', $userId],
-            ])
-            ->orderBy('date', 'desc')
-            ->paginate($panigate);
-        return $logData;
-    }
+  
 }

@@ -6,30 +6,37 @@ Route::get('/maintenance', function () {
 	return view('baotri');
 })->name('baotri');
 
+// -------------------- Authentication -----------------------------
+
+Route::get('/', 'BaseController@index')->name('index'); //Trang chủ
+Route::get('login', 'BaseController@login')->name('login'); //Trang đăng nhập
+Route::post('login', 'UserController@login_user')->name('login_user'); //Đăng nhập tài khoản user
+Route::get('/register', 'BaseController@register')->name('register'); //Trang đăng ký
+Route::post('/register', 'UserController@register_user')->name('register_user'); //Đăng ký tài khoản user
+Route::get('/logout', 'UserController@logout_user')->name('logout_user'); //Đăng xuất tài khoản user
+Route::get('/logout', 'UserController@logout_user')->name('logout_user'); //Đăng xuất tài khoản user
+Route::get('/nap-the', 'BaseController@nap_the')->name('nap_the'); //Nạp thẻ cào
+Route::get('/profile', 'BaseController@profile')->name('profile'); //Trang profile cá nhân
+Route::get('/login/facebook/facebook', 'SocialController@redirect')->name('login_facebook');
+Route::get('/callback/facebook', 'SocialController@callback');
+
+Route::get('/admin', 'AdminController@login')->name('login_admin')->middleware('checkLogout');
+Route::post('/login-admin', 'AdminController@getLogin')->name('getLogin');
+Route::get('logout-admin', 'AdminController@Logout')->name('logout_admin');
+
+
+//------------------------- USERS -------------------------------------
 Route::group(['prefix' => '/', 'middleware' => ['CheckMaintenance']], function () {
 
-	//------------------------- Giao diện người dùng-------------------------------------
-	Route::get('/', 'BaseController@index')->name('index'); //Trang chủ
-	Route::get('login', 'BaseController@login')->name('login'); //Trang đăng nhập
-	Route::post('login', 'UserController@login_user')->name('login_user'); //Đăng nhập tài khoản user
-	Route::get('/register', 'BaseController@register')->name('register'); //Trang đăng ký
-	Route::post('/register', 'UserController@register_user')->name('register_user'); //Đăng ký tài khoản user
-	Route::get('/logout', 'UserController@logout_user')->name('logout_user'); //Đăng xuất tài khoản user
-	Route::get('/logout', 'UserController@logout_user')->name('logout_user'); //Đăng xuất tài khoản user
-	Route::get('/nap-the', 'BaseController@nap_the')->name('nap_the'); //Nạp thẻ cào
-	Route::get('/profile', 'BaseController@profile')->name('profile'); //Trang profile cá nhân
-
-	Route::get('/login/facebook/facebook', 'SocialController@redirect')->name('login_facebook');
-	Route::get('/callback/facebook', 'SocialController@callback');
-
-	Route::get('/nap-the', 'NapTheController@index')->name('nap_the'); // Nạp thẻ
+	//------- NẠP THẺ
+	Route::get('/nap-the', 'NapTheController@index')->middleware('CheckLogin')->name('nap_the'); // Nạp thẻ
 	Route::post('/xac-nhan-nap-the', 'NapTheController@submitNapThe')->name('xac_nhan_nap_the'); // Xác nhận nạp thẻ
 	Route::get('/nap-the-callback', 'NapTheController@callbackNapThe'); // Nạp thẻ
 
 	Route::get('/nap-tien-atm', 'NapTheController@nap_ATM')->name('nap_atm'); // Nạp ATM
 
 	//------------------DANH MỤC GAME: Ngọc Rồng----------------
-	Route::get('/ngoc-rong/{param}', 'GameController@ngoc_rong')->name('ngoc_rong'); //show
+	Route::get('/ngoc-rong', 'GameController@ngoc_rong')->name('ngoc_rong'); //show
 	Route::get('/ngoc-rong/chi-tiet/{id}', 'GameController@chi_tiet_ngoc_rong')->name('chi_tiet_ngoc_rong'); //chi tiết ngọc rồng
 	Route::post('/ngoc-rong/thanh-toan', 'GameController@thanh_toan_ngoc_rong')->name('pay_ngoc_rong'); //pay
 
@@ -100,13 +107,8 @@ Route::group(['prefix' => '/', 'middleware' => ['CheckMaintenance']], function (
 	});
 });
 
-// ------------------Authentication-----------------------------
-Route::get('/admin', 'AdminController@login')->name('login_admin')->middleware('checkLogout');
-Route::post('/login-admin', 'AdminController@getLogin')->name('getLogin');
-Route::get('logout-admin', 'AdminController@Logout')->name('logout_admin');
-
-//-------------------Admin-----------------------------------------
-Route::group(['prefix' => 'quan-tri', 'as' => 'admin.', 'middleware' => ['checkLogin']], function () {
+//------------------------- ADMIN --------------------------------------
+Route::group(['prefix' => 'quan-tri', 'as' => 'admin.', 'middleware' => ['CheckAdmin']], function () {
 
 	//-----------------------------Trang chủ------------------
 	Route::get('trang-chu', 'HomeController@Home')->name('home');
@@ -143,6 +145,7 @@ Route::group(['prefix' => 'quan-tri', 'as' => 'admin.', 'middleware' => ['checkL
 	Route::get('tai-khoan-ngoc-rong', 'GameController@tk_ngocrong')->name('tk_ngocrong');
 	Route::get('xoa-ngoc-rong/{id}', 'GameController@delete_ngocrong')->name('delete_ngocrong');
 	Route::post('them-ngoc-rong', 'GameController@add_ngocrong')->name('add_ngocrong');
+	Route::post('edit-ngoc-rong', 'GameController@edit_ngocrong_modal')->name('edit_ngocrong');
 	Route::post('sua-ngoc-rong', 'GameController@change_ngocrong')->name('change_ngocrong');
 
 	Route::get('tai-khoan-pubg', 'GameController@tk_pubg')->name('tk_pubg');
@@ -174,6 +177,5 @@ Route::group(['prefix' => 'quan-tri', 'as' => 'admin.', 'middleware' => ['checkL
 
 		Route::get('lich-su-quay', 'ChargeController@history_whell')->name('history_whell');
 		Route::post('xoa-all-lich-su-quay', 'ChargeController@delete_all_wheel')->name('delete_all_wheel');
-
 	});
 });

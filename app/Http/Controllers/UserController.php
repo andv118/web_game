@@ -12,6 +12,11 @@ use Auth;
 class UserController extends Controller
 {
 
+    public function login()
+    {
+        return view('users/login');
+    }
+
     public function login_user(Request $request)
     {
         $this->validate(
@@ -31,14 +36,13 @@ class UserController extends Controller
         $check2 = array('email' => $request->username, 'password' => $request->password);
 
         if (Auth::attempt($check) || Auth::attempt($check2)) {
-            Session::put('user_id', Auth::user()->id . '_' . Auth::user()->user_id);
+            Session::put('user_id', Auth::user()->user_id);
             return redirect()->route('index');
         } else {
 
             return redirect()->back()->with(['flag' => 'danger', 'message' => 'Đăng nhập thất bại. Sai tài khoản hoặc mật khẩu']);
         }
     }
-
 
 
     public function register_user(Request $req)
@@ -91,14 +95,6 @@ class UserController extends Controller
         $user->save();
 
         return redirect()->back()->with('thanhcong', 'Tạo tài khoản thành công');
-    }
-
-
-
-    public function Login()
-    {
-
-        return view('users/login');
     }
 
     public function getLogin(Request $request)

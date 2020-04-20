@@ -7,7 +7,7 @@ use Closure;
 use Auth;
 use Session;
 
-class checkLogin
+class CheckLogin
 {
     /**
      * Handle an incoming request.
@@ -18,9 +18,9 @@ class checkLogin
      */
     public function handle($request, Closure $next)
     {
-        if (Session::has('admin_id')) {
+        if (Auth::check()) {
             return $next($request);
         }
-        return redirect()->route('login_admin');
+        return redirect()->route('login_user');
     }
 }

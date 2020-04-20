@@ -11,13 +11,12 @@ use App\Models\Pubg;
 use App\Models\Freefire;
 use App\Models\Lienquan;
 use App\Models\Random;
-use Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
 use App\Object\Game\GameNgocRong;
-
+use Illuminate\Support\Facades\Auth;
 
 class GameController extends Controller
 {
@@ -28,9 +27,10 @@ class GameController extends Controller
      * @param string
      * @return view
      */
-    public function ngoc_rong($param, Request $request)
+    public function ngoc_rong(Request $request)
     {
         $pagination = 20;
+        $title = "Tài khoản ngọc rồng";
         $userCash = 0;
         if (Auth::check()) {
             $userCash = Auth::user()->cash;
@@ -50,16 +50,6 @@ class GameController extends Controller
 
         $price1 = $this->progressPrice($price)['price1'];
         $price2 = $this->progressPrice($price)['price2'];
-
-        if ($param == 'all') {
-            $title = "Tài khoản ngọc rồng";
-        } elseif ($param == 'tam-trung') {
-            $title = "Tài khoản ngọc rồng tầm trung";
-            $price1 = 0;
-            $price2 = 300000;
-        } else {
-            return redirect()->route('index');
-        }
 
         $data = Ngocrong::query()
             ->note($keyword)
@@ -296,7 +286,7 @@ class GameController extends Controller
         $this->validate(
             $request,
             [
-                'cost' => 'required|integer|min:0|max:100000000',
+                'cost' => 'required',
             ],
 
             [
@@ -308,14 +298,24 @@ class GameController extends Controller
 
             [
                 'cost' => 'Số tiền',
-                'thumb' => 'Ảnh đại diện',
-                'imginfo' => 'Ảnh thông tin',
             ]
         );
-
-        $user_id = Auth::user()->user_id;
+      
+        
+        $user_id = '';
+        if($request->session()->has('admin_id')) {
+            $user_id = $request->session()->get('admin_id', '');
+        } else {
+            return redirect()->route('login_admin');
+        }
+        
         $infor    = $request->input('infor');
         $cost     = $request->input('cost');
+        $cost     = preg_replace('/[ ,]+/', '', trim($cost));
+        // check gia tien
+        if(!ctype_digit($cost) || (int) $cost <= 0 || (int) $cost > 1000000000) {
+            return redirect()->back()->withErrors('Số tiền nhập vào phải là số trong khoảng (0 - 1,000,000,000)');
+        }
         $dangky   = $request->input('dangky');
         $server   = $request->input('server');
         $hanhtinh = $request->input('hanhtinh');
@@ -333,6 +333,7 @@ class GameController extends Controller
         // if (Ngocrong::where('info', '=', $infor)->count() > 0) {
         //     return redirect()->back()->withErrors('Infor (Tài khoản) đã tồn tại!');
         // }
+
         // insert db
         $arrInsert = [
             'user_post_id' => $user_id,
@@ -367,12 +368,24 @@ class GameController extends Controller
         return redirect()->back()->with('message', 'Thêm tài khoản thành công!');
     }
 
+    /**
+     * ajax edit ngoc rong
+     * @return json
+     */
+    public function edit_ngocrong_modal(Request $request) {
+        if(request()->ajax())
+        {   $id = request()->id;
+            $data = Ngocrong::findOrFail($id);
+            return response()->json($data);
+        }
+    }
+
     public function change_ngocrong(Request $request)
-    {
+    {   
         $this->validate(
             $request,
             [
-                'cost' => 'required|integer|min:0|max:100000000',
+                'cost' => 'required',
             ],
 
             [
@@ -386,11 +399,16 @@ class GameController extends Controller
                 'cost' => 'Số tiền',
             ]
         );
-
-        // dd($request->input());
+        
         $id       = $request->input('id');
         $infor    = $request->input('infor');
         $cost     = $request->input('cost');
+        $cost     = preg_replace('/[ ,]+/', '', trim($cost));
+        // check gia tien
+        if(!ctype_digit($cost) || (int) $cost <= 0 || (int) $cost > 1000000000) {
+            return redirect()->back()->withErrors('Số tiền nhập vào phải là số trong khoảng (0 - 1,000,000,000)');
+        }
+
         $dangky   = $request->input('dangky');
         $server   = $request->input('server');
         $hanhtinh = $request->input('hanhtinh');
@@ -401,7 +419,7 @@ class GameController extends Controller
         $stick    = $request->input('stick');
         $cost_atm = (int) round(($cost * 80) / 100);
 
-        // dd($infor);
+        
 
         $arrInsert = [
             'info' => $infor,
@@ -422,8 +440,6 @@ class GameController extends Controller
 
         return redirect()->back()->with('message', 'Cập nhật tài khoản thành công!');
     }
-
-
 
     /*********************** Game khac User ***************/
     public function tk_pubg()

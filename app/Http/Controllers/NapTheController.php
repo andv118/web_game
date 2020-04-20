@@ -4,25 +4,35 @@ namespace App\Http\Controllers;
 
 use App\Models\NapCham;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use App\Models\Users;
 use App\Models\UsersLog;
 use Auth;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 
-
 class NapTheController extends Controller
 {
 
-    public function index()
+    protected $user_id = null;
+    protected $domain = null;
+
+    public function __construct()
     {
-        if (!Auth::check()) {
-            return redirect()->route('login_user');
-        }
+        $this->middleware(function ($request, $next) {
+            $this->user_id = session()->get('user_id');
+            $this->domain = $request->root();
+            return $next($request);
+        });
+    }
+
+    public function index()
+    {   
+        
         // Get dữ liệu lịch sử nạp thẻ
-        $napCham = new NapCham();
-        $dataLog = $napCham->getLogNapThe(Auth::user()['user_id']);
+        $panigate = 10;
+        $dataLog = NapCham::where('user_id', '=', $this->user_id)->orderBy('date', 'desc')
+            ->paginate($panigate);
+
         return view('user/napthe/index')->with([
             'dataLog' => $dataLog,
         ]);
@@ -44,7 +54,10 @@ class NapTheController extends Controller
         $callback_sign = $request->input('callback_sign');
 
         // ghi file
+        $time = Carbon::now();
+        
         $arr = [
+            'time' => $time->toDateString() . '-' . $time->toTimeString(),
             'status'        => $status,
             'message'       => $message,
             'request_id'    => $request_id,
@@ -54,7 +67,8 @@ class NapTheController extends Controller
             'telco'         => $telco,
             'callback_sign' => $callback_sign,
         ];
-        Storage::put("log_callback.txt", json_encode($arr));
+
+        Storage::put("log_callback.txt", json_encode($arr, JSON_UNESCAPED_UNICODE));
 
         if ($serial != null) {
             // get user_id
@@ -84,19 +98,7 @@ class NapTheController extends Controller
             UsersLog::serial($serial)
                 ->update(['status' => $status, 'last_amount' => $last_money]);
         }
-
-        // return back
-        // if($status == 1) {
-        //     $status = 'success';
-        // } else {
-        //     $status = 'danger';
-        // }
-        // return back()->with([
-        //     'status' => $status,
-        //     'msg'    => $message
-        // ]);
     }
-
 
     /**
      * Xác nhận nạp thẻ
@@ -125,13 +127,13 @@ class NapTheController extends Controller
         $pattern = '/^[a-zA-Z0-9]+$/';
         if (!preg_match($pattern, $data['serial']) || !preg_match($pattern, $data['code'])) {
             $msgErr = 'Mã thẻ hoặc serial không hợp lệ, thử lại nào :D';
-            $notifi = 'warning';
-        } elseif (!$this->checkUserLooked(Auth::user()['user_id'])) {
+            $notifi = 'danger';
+        } elseif (!$this->checkUserLooked()) {
             $msgErr = 'Tài khoản của bạn đã bị chặn giao dịch';
-            $notifi = 'error';
+            $notifi = 'danger';
         } elseif (!$this->checkCardExist($data['code'], $data['serial'])) {
             $msgErr = 'Thẻ đã tồn tại trong hệ thống :)';
-            $notifi = 'warning';
+            $notifi = 'danger';
         } else {
             // gửi data post đến trang nạp thẻ
             $dataPost = http_build_query($data); //Tạo chuỗi truy vấn được mã hóa URL
@@ -144,6 +146,7 @@ class NapTheController extends Controller
             $result = curl_exec($ch); // nhận kết quả
             curl_close($ch); // kết thúc post data
             $result = json_decode($result);
+
             // dd($result);
             // xử lý kết quả trả về
             try {
@@ -160,96 +163,68 @@ class NapTheController extends Controller
                             //     break;
                         case 3:
                             $msgErr = "Thẻ lỗi";
-                            $notifi = 'error';
+                            $notifi = 'danger';
                             break;
                         case 4:
                             $msgErr = "Hệ thống bảo trì";
-                            $notifi = 'error';
+                            $notifi = 'danger';
                             break;
                         default:
                             $msgErr = $result->message;
                             $notifi = 'warning';
                             // insert histtory to db
-                            $domain = $request->root();
-                            $this->insertHistory($result, $domain);
+                            $this->insertHistory($result);
                     }
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $msgErr = $e->getMessage();
-                $notifi = 'error';
+                $notifi = 'danger';
             }
         }
-        // put session notification
-        // session()->put('napthe-notifi',$notifi);
-        // session()->put('napthe-msg',$msgErr);
 
-        return back()->with([
-            'status' => $notifi,
-            'msg'    => $msgErr
-        ]);
+        return back()->with(['status' => $notifi, 'msg' => $msgErr]);
     }
 
     /**
      * Insert to db lịch sử nạp thẻ, thẻ trên hệ thống
      * @param json jsonResult
      */
-    public function insertHistory($jsonResult, $domain)
-    {
+    public function insertHistory($jsonResult)
+    {   
         $trade_type = 4; // trade type = 4: là nạp tiền
         if (isset($jsonResult->serial) || isset($jsonResult->code) || isset($jsonResult->amount)) {
             // insert nap cham
-            $user_id = Auth::user()['user_id'];
-            $arrNapCham = [
-                'user_id'  => $user_id,
-                'serial'   => $jsonResult->serial,
-                'pin'      => $jsonResult->code,
-                'tel'      => $jsonResult->telco,
-                'desc'     => $jsonResult->message,
-                'amount'   => $jsonResult->declared_value, // gia tri khai bao
-                'fee'      => 0,
-                'status'   => $jsonResult->status,
-                'type'     => 0,
-                'add_time' => time(),
-                'trans_id' => '',
-                // 'trans_id' => $jsonResult->request_id,
-                'domain'   => $domain,
-            ];
-            NapCham::insert($arrNapCham);
+            $napCham = NapCham::firstOrNew(['serial' => $jsonResult->serial]);
+            $napCham->user_id     = $this->user_id;
+            $napCham->serial      = $jsonResult->serial;
+            $napCham->pin         = $jsonResult->code;
+            $napCham->tel         = $jsonResult->telco;
+            $napCham->desc        = $jsonResult->message;
+            $napCham->amount      = $jsonResult->declared_value;
+            $napCham->fee         = 0;
+            $napCham->status      = $jsonResult->status;
+            $napCham->type        = 0;
+            $napCham->add_time    = time();
+            $napCham->trans_id    = '';
+            // $napCham->trans_id    = $jsonResult->request_id;
+            $napCham->domain      = $this->domain;
+            $napCham->save();
 
             // insert users_log
             $content = "Nạp thẻ cào " . $jsonResult->telco . " có serial " . $jsonResult->serial;
-            $last_amout = Users::UserId($user_id)
-                ->select('cash')
-                ->limit(1)
-                ->get();
-            $last_amout = $last_amout[0]->cash;
-            $mytime = Carbon::now();
-            $arrUserLog = [
-                'user_id'     => $user_id,
-                'trade_type'  => $trade_type,
-                'action_id'   => '',
-                'content'     => $content,
-                'serial'      => $jsonResult->serial,
-                'amount'      => $jsonResult->declared_value, // gia tri khai bao
-                'last_amount' => $last_amout,
-                'status'      => $jsonResult->status,
-                'date'        => $mytime->toDateTimeString(),
-                'add_time'    => time(),
-                'domain'      => $domain,
-            ];
-            
-            $usersLog = UsersLog::firstOrNew(['serial' => $arrUserLog['serial']]);
-            $usersLog->user_id = $arrUserLog['user_id'];
-            $usersLog->trade_type = $arrUserLog['trade_type'];
-            $usersLog->action_id = $arrUserLog['action_id'];
-            $usersLog->content = $arrUserLog['content'];
-            $usersLog->serial = $arrUserLog['serial'];
-            $usersLog->amount = $arrUserLog['amount'];
-            $usersLog->last_amount = $arrUserLog['last_amount'];
-            $usersLog->status = $arrUserLog['status'];
-            $usersLog->date = $arrUserLog['date'];
-            $usersLog->add_time = $arrUserLog['add_time'];
-            $usersLog->domain = $arrUserLog['domain'];
+            $last_amout = Users::UserId($this->user_id)->select('cash')->first()->cash;
+          
+            $usersLog = UsersLog::firstOrNew(['serial' => $jsonResult->serial]);
+            $usersLog->user_id     = $this->user_id;
+            $usersLog->trade_type  = $trade_type;
+            $usersLog->action_id   = '';
+            $usersLog->content     = $content;
+            $usersLog->serial      = $jsonResult->serial;
+            $usersLog->amount      = $jsonResult->declared_value;
+            $usersLog->last_amount = $last_amout;
+            $usersLog->status      = $jsonResult->status;
+            $usersLog->add_time    = time();
+            $usersLog->domain      = $this->domain;
             $usersLog->save();
         }
     }
@@ -258,13 +233,13 @@ class NapTheController extends Controller
      * Check tài khoản bị khóa giao dịch
      * @return boolean;
      */
-    public function checkUserLooked($userId)
+    public function checkUserLooked()
     {
-        $userModel = new Users();
-        $user = $userModel->getUser($userId);
-
-        if ($user[0]['locked'] != 0) {
-            return false;
+        if ($this->user_id != null) {
+            $lock = Users::where([['user_id', '=', $this->user_id], ['locked', '=', 1]])->count();
+            if ($lock != 0) {
+                return false;
+            }
         }
         return true;
     }
@@ -275,10 +250,8 @@ class NapTheController extends Controller
      */
     public function checkCardExist($code, $serial)
     {
-        $napCham = new NapCham();
-        $card = $napCham->getCardExist($code, $serial);
-        $count = $card[0]['count'];
-        if ($count >= 1) {
+        $card = NapCham::where('serial', '=', $serial)->orWhere('pin', '=', $code)->count();
+        if ($card > 0) {
             return false;
         }
         return true;

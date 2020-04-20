@@ -142,7 +142,7 @@ $stt = $perPage * ($page - 1);
                                     @if($item->status == 1)
                                     <td colspan="2" style="text-align: center;"></td>
                                     @else
-                                    <td style="text-align: center;"><button id="update_ngocrong" type="button" data-toggle="modal" data-target="#modal_update_ngocrong" class="btn btn-info" data-id="{{$item->id}}" data-infor="{{$item->info}}" data-cost="{{$item->cost}}" data-dangky="{{$item->dk}}" data-server="{{$item->server}}" data-hanhtinh="{{$item->hanhtinh}}" data-detu="{{$item->detu}}" data-bongtai="{{$item->bongtai}}" data-note="{{$item->note}}" data-active="{{$item->active}}" data-stick="{{$item->stick}}"><i class="fa fa-edit"></i> Cập nhật</button></td>
+                                    <td style="text-align: center;"><button value="{{$item->id}}" type="button" class="btn btn-info edit" data-id="{{$item->id}}" data-toggle="modal" data-target="#modal_update_ngocrong"><i class="fa fa-edit"></i> Cập nhật</button></td>
                                     <td style="text-align:center;"><a href="{{Route('admin.delete_ngocrong',$item->id)}}" title="Xóa" class="btn btn-danger" onclick="return confirm('Bạn chắc chắn muốn xóa toàn tài khoản?')"><i class="fas fa-times-circle"></i> Xóa</a></td>
                                     @endif
                                 </tr>
@@ -177,42 +177,49 @@ $stt = $perPage * ($page - 1);
 <script>
     $(document).ready(function() {
 
-        $('#update_ngocrong').on('click', function(event) {
-            $('#modal_update_ngocrong').on('show.bs.modal', function(event) {
-                var button = $(event.relatedTarget) // Button that triggered the modal
-                // console.log(123);
+        $('.edit').click(function() {
+            var id = $(this).val();
+            $.ajax({
+                url: '{{ URL::route("admin.edit_ngocrong")}}',
+                method: 'POST',
+                data: {
+                    '_token': "{{ csrf_token() }}",
+                    'id': id
+                },
+                dataType: "json",
+                success: function(data) {
+                    var modal = $('#modal_update_ngocrong');
+                    var id = data.id;
+                    var infor = data.info;
+                    var cost = data.cost;
+                    cost = addCommas(cost);
+                    var dangky = data.dk;
+                    var server = data.server;
+                    var hanhtinh = data.hanhtinh;
+                    var detu = data.detu;
+                    var bongtai = data.bongtai;
+                    var note = data.note;
+                    var active = data.active;
+                    var stick = data.stick;
 
-                var id = button.data('id')
-                var infor = button.data('infor')
-                var cost = button.data('cost')
-                var dangky = button.data('dangky')
-                var server = button.data('server')
-                var hanhtinh = button.data('hanhtinh')
-                var detu = button.data('detu')
-                var bongtai = button.data('bongtai')
-                var note = button.data('note')
-                var active = button.data('active')
-                var stick = button.data('stick')
-
-                cost = addCommas(cost)
-
-                // console.log(stick)
-
-                var modal = $(this)
-                modal.find('.modal-title').text('Sửa tài khoản Ngọc Rồng #' + id)
-                modal.find('input[name="id"]').val(id)
-                modal.find('input[name="infor"]').val(infor)
-                modal.find('input[name="cost"]').val(cost)
-                modal.find('input[name="note"]').val(note)
-                selectOption(modal.find('select[name="dangky"]'), dangky);
-                selectOption(modal.find('select[name="server"]'), server);
-                selectOption(modal.find('select[name="hanhtinh"]'), hanhtinh);
-                selectOption(modal.find('select[name="detu"]'), detu);
-                selectOption(modal.find('select[name="bongtai"]'), bongtai);
-                selectOption(modal.find('select[name="active"]'), active);
-                selectOption(modal.find('select[name="stick"]'), stick);
-
+                    modal.find('.modal-title').text('Sửa tài khoản Ngọc Rồng #' + id)
+                    modal.find('input[name="id"]').val(id)
+                    modal.find('input[name="infor"]').val(infor)
+                    modal.find('input[name="cost"]').val(cost)
+                    modal.find('input[name="note"]').val(note)
+                    selectOption(modal.find('select[name="dangky"]'), dangky);
+                    selectOption(modal.find('select[name="server"]'), server);
+                    selectOption(modal.find('select[name="hanhtinh"]'), hanhtinh);
+                    selectOption(modal.find('select[name="detu"]'), detu);
+                    selectOption(modal.find('select[name="bongtai"]'), bongtai);
+                    selectOption(modal.find('select[name="active"]'), active);
+                    selectOption(modal.find('select[name="stick"]'), stick);
+                },
+                error: function() {
+                    alert("error");
+                }
             })
+
         });
 
         function selectOption(select, value) {
@@ -223,15 +230,22 @@ $stt = $perPage * ($page - 1);
             });
         }
 
-        $('button[type="submit"]').click(function() {
-            var price = $('input[name="cost"]').val();
+        $('#submit_add_ngocrong').click(function() {
+            var price = $('#price_add_ngocrong').val();
             price = parseInt(price.replace(/,/g, ''));
-            $('input[name="cost"]').val(price);
+            $('#price_add_ngocrong').val(price);
+        });
+
+
+        $('#submit_update_ngocrong').click(function() {
+            var price = $('#price_update_ngocrong').val();
+            price = parseInt(price.replace(/,/g, ''));
+            $('#price_add_ngocrong').val(price);
         });
 
         $('input[name="cost"]').keyup(function() {
             var price = $(this).val();
-            if(price.trim()) {
+            if (price.trim()) {
                 price = parseInt(price.replace(/,/g, ''));
                 price = addCommas(price);
             }

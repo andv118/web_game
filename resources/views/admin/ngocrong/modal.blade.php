@@ -24,7 +24,7 @@
                         <div class="col-lg-6 col-md-12 col-sm-12">
                             <div class="input-group m-b-10 c-square">
                                 <span class="input-group-addon"><b>Giá:</b></span>
-                                <input class="form-control c-square c-theme price" type="text" name="cost" placeholder="Nhập giá bán" required="" value="">
+                                <input id="price_add_ngocrong" class="form-control c-square c-theme price" type="text" name="cost" placeholder="Nhập giá bán" required="" value="">
                             </div>
                         </div>
 
@@ -130,7 +130,7 @@
                         <div class="col-lg-6 col-md-12 col-sm-12">
                             <div class="input-group m-b-10 c-square">
                                 <span class="input-group-addon"><b>Ghim:</b></span>
-                                <select class="form-control c-square c-theme" name="stick" required>
+                                <select class="form-control c-square c-theme" name="stick" required="true">
                                     <option value="0">Kông</option>
                                     <option value="1">Ghim lên</option>
                                 </select>
@@ -160,7 +160,7 @@
             </div>
 
             <div class="modal-footer justify-content-right">
-                <button type="submit" class="btn btn-primary" form="add_ngocrong_123">Thêm mới</button>
+                <button id="submit_add_ngocrong" type="submit" class="btn btn-primary" form="add_ngocrong_123">Thêm mới</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng </button>
             </div>
         </div>
@@ -198,7 +198,7 @@
                         <div class="col-lg-6 col-md-12 col-sm-12">
                             <div class="input-group m-b-10 c-square">
                                 <span class="input-group-addon"><b>Giá:</b></span>
-                                <input class="form-control c-square c-theme" type="text" name="cost" placeholder="Nhập giá bán" required="" value="">
+                                <input id="price_update_ngocrong" class="form-control c-square c-theme" type="text" name="cost" placeholder="Nhập giá bán" required="" value="">
                             </div>
                         </div>
 
@@ -317,7 +317,7 @@
             </div>
 
             <div class="modal-footer justify-content-right">
-                <button type="submit" class="btn btn-primary" form="change_ngocrong">Sửa</button>
+                <button id="submit_update_ngocrong" type="submit" class="btn btn-primary" form="change_ngocrong">Sửa</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng </button>
             </div>
         </div>

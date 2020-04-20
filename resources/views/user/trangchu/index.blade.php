@@ -77,9 +77,9 @@
                 <div class="col-sm-3 col-xs-12 col-md-3" style="margin-bottom:10px;">
                     <div class="classWithPad">
                         <div class="news_image">
-                            <a href="{{Route('ngoc_rong','all')}}" class=""><img src="public/client/assets//images/ngocrongonline.jpg"></a>
+                            <a href="{{Route('ngoc_rong')}}" class=""><img src="public/client/assets//images/ngocrongonline.jpg"></a>
                         </div>
-                        <div class="news_title"><a style="color: black!important;" href="{{Route('ngoc_rong','all')}}">Bán Nick Ngọc Rồng</a></div>
+                        <div class="news_title"><a style="color: black!important;" href="{{Route('ngoc_rong')}}">Bán Nick Ngọc Rồng</a></div>
                         <div class="news_description" style="font-size: 15px!important;">
                             <p>
                                 Số Tài Khoản Hiện Có: 163,130
@@ -93,7 +93,7 @@
 
                                 <div class="col-xs-12">
                                     <div class="view button-hover">
-                                        <a href="{{Route('ngoc_rong','all')}}">Xem tất cả</a>
+                                        <a href="{{Route('ngoc_rong')}}">Xem tất cả</a>
                                     </div>
                                 </div>
 
